@@ -1,4 +1,14 @@
 <laravel-boost-guidelines>
+# Decisões permanentes do projeto
+
+- Portal brasileiro SSR em Laravel, Blade e Tailwind; não é uma SPA.
+- A Wosti Futebol TV Brasil é a fonte principal e única de jogos nesta fase.
+- Persistir e publicar somente eventos da Wosti que tenham ao menos um canal de TV ou streaming válido.
+- Não complementar a grade com partidas sem transmissão vindas de outras APIs.
+- Timezone `America/Sao_Paulo`, locale `pt_BR` e horários públicos de Brasília.
+- A API nunca é consultada durante uma visita: Wosti → comando agendado → banco → Laravel → Blade.
+- Credenciais vivem apenas no `.env`, nunca no Git.
+
 # Laravel Application
 
 This repository contains a Laravel application. Complete the following setup before working on the user's request.

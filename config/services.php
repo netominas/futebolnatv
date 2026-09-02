@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'wosti' => [
+        'key' => env('WOSTI_API_KEY'),
+        'host' => env('WOSTI_API_HOST', 'wosti-futebol-tv-brasil.p.rapidapi.com'),
+        'base_url' => env('WOSTI_API_URL', 'https://wosti-futebol-tv-brasil.p.rapidapi.com'),
+        'sync_enabled' => env('WOSTI_SYNC_ENABLED', false),
+        'sync_cron' => env('WOSTI_SYNC_CRON', '*/30 * * * *'),
+    ],
+
 ];
