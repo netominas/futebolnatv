@@ -14,6 +14,11 @@ class Team extends Model
         return $this->local_logo_path ? asset('storage/'.$this->local_logo_path) : null;
     }
 
+    public function publicUrl(): string
+    {
+        return route('teams.show', ['team' => $this->slug]);
+    }
+
     public function homeFixtures(): HasMany
     {
         return $this->hasMany(Fixture::class, 'home_team_id');
