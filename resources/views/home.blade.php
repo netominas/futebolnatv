@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Confira os jogos de futebol com transmissão na TV e no streaming no Brasil.">
-    <title>Futebol na TV hoje: jogos e onde assistir</title>
+    <meta name="description" content="Jogos de futebol com transmissão na TV e no streaming em {{ $selectedDate->translatedFormat('d \d\e F \d\e Y') }}.">
+    <link rel="canonical" href="{{ $isToday ? route('home') : route('fixtures.by-date', ['date' => $selectedDate->format('Y-m-d')]) }}">
+    <title>{{ $isToday ? 'Futebol na TV hoje' : 'Futebol na TV em '.$selectedDate->format('d/m/Y') }}: jogos e onde assistir</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-100 text-slate-950 antialiased">
@@ -16,17 +17,42 @@
     </header>
 
     <main class="mx-auto max-w-5xl px-4 py-8">
-        <div class="mb-7">
-            <h1 class="text-3xl font-black tracking-tight">Jogos de futebol na TV</h1>
-            <p class="mt-2 max-w-2xl text-slate-600">Programação dos próximos dias com canais de TV e serviços de streaming informados pela Wosti.</p>
+        <div class="mb-6">
+            <p class="text-sm font-bold uppercase tracking-wide text-emerald-800">Programação por data</p>
+            <h1 class="mt-1 text-3xl font-black tracking-tight">
+                {{ $isToday ? 'Jogos na TV hoje' : 'Jogos na TV em '.$selectedDate->translatedFormat('d \d\e F') }}
+            </h1>
+            <p class="mt-2 max-w-2xl text-slate-600">Somente partidas com transmissão informada pela Wosti para o Brasil.</p>
         </div>
 
-        @forelse ($fixturesByDate as $date => $fixtures)
-            <section class="mb-8" aria-labelledby="date-{{ $date }}">
-                <h2 id="date-{{ $date }}" class="mb-3 text-lg font-bold capitalize">
-                    {{ $fixtures->first()->starts_at->translatedFormat('l, d \d\e F') }}
-                </h2>
+        <nav class="mb-6 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-[1fr_auto_1fr] sm:items-center" aria-label="Navegação por data">
+            <a href="{{ route('fixtures.by-date', ['date' => $selectedDate->subDay()->format('Y-m-d')]) }}" class="rounded-xl border border-slate-200 px-4 py-2 text-center font-semibold hover:bg-slate-50 sm:text-left">
+                ← Dia anterior
+            </a>
 
+            <form method="get" action="{{ route('fixtures.redirect-to-date') }}" class="flex items-center justify-center gap-2">
+                <label for="data" class="sr-only">Escolher data</label>
+                <input id="data" name="data" type="date" value="{{ $selectedDate->format('Y-m-d') }}" class="rounded-xl border border-slate-300 px-3 py-2 font-semibold">
+                <button type="submit" class="rounded-xl bg-emerald-800 px-4 py-2 font-bold text-white hover:bg-emerald-700">Ver</button>
+            </form>
+
+            <a href="{{ route('fixtures.by-date', ['date' => $selectedDate->addDay()->format('Y-m-d')]) }}" class="rounded-xl border border-slate-200 px-4 py-2 text-center font-semibold hover:bg-slate-50 sm:text-right">
+                Próximo dia →
+            </a>
+        </nav>
+
+        @unless ($isToday)
+            <div class="mb-5 text-center">
+                <a href="{{ route('home') }}" class="font-bold text-emerald-800 hover:underline">Voltar aos jogos de hoje</a>
+            </div>
+        @endunless
+
+        <section aria-labelledby="selected-date">
+            <h2 id="selected-date" class="mb-3 text-lg font-bold capitalize">
+                {{ $selectedDate->translatedFormat('l, d \d\e F \d\e Y') }}
+            </h2>
+
+            @if ($fixtures->isNotEmpty())
                 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                     @foreach ($fixtures as $fixture)
                         <article class="grid gap-3 border-b border-slate-100 p-4 last:border-b-0 sm:grid-cols-[5rem_1fr_14rem] sm:items-center">
@@ -45,13 +71,13 @@
                         </article>
                     @endforeach
                 </div>
-            </section>
-        @empty
-            <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-                <h2 class="text-xl font-bold">Programação em atualização</h2>
-                <p class="mt-2 text-slate-600">Ainda não há jogos televisionados disponíveis para os próximos dias.</p>
-            </div>
-        @endforelse
+            @else
+                <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                    <h2 class="text-xl font-bold">Nenhum jogo na TV nesta data</h2>
+                    <p class="mt-2 text-slate-600">A Wosti ainda não informou partidas televisionadas para este dia.</p>
+                </div>
+            @endif
+        </section>
 
         <p class="mt-8 text-sm text-slate-500">Horários de Brasília. A programação pode ser alterada pelos canais sem aviso prévio.</p>
     </main>

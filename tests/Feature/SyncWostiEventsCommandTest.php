@@ -31,7 +31,7 @@ class SyncWostiEventsCommandTest extends TestCase
         $this->assertDatabaseHas('broadcast_channels', ['wosti_id' => 5034, 'name' => 'Disney+ Premium']);
         $this->assertDatabaseHas('fixtures', ['wosti_id' => 774345, 'is_listed' => true]);
 
-        $this->get('/')
+        $this->get(route('fixtures.by-date', ['date' => now()->addDay()->format('Y-m-d')]))
             ->assertOk()
             ->assertSee('Londrina')
             ->assertSee('Juventude')

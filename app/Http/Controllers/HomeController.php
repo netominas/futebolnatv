@@ -3,21 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fixture;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function __invoke(): View
     {
+        return $this->scheduleFor(CarbonImmutable::today());
+    }
+
+    public function byDate(string $date): View
+    {
+        $selectedDate = CarbonImmutable::createFromFormat('Y-m-d', $date)->startOfDay();
+
+        abort_unless($selectedDate->format('Y-m-d') === $date, 404);
+
+        return $this->scheduleFor($selectedDate);
+    }
+
+    public function redirectToDate(Request $request): RedirectResponse
+    {
+        $validated = $request->validate(['data' => ['required', 'date_format:Y-m-d']]);
+
+        return redirect()->route('fixtures.by-date', ['date' => $validated['data']]);
+    }
+
+    private function scheduleFor(CarbonImmutable $selectedDate): View
+    {
         $fixtures = Fixture::query()
             ->with(['competition:id,name', 'homeTeam:id,name', 'awayTeam:id,name', 'channels:id,name'])
             ->where('is_listed', true)
             ->whereHas('channels')
-            ->whereBetween('starts_at', [now()->startOfDay(), now()->addDays(7)->endOfDay()])
+            ->whereBetween('starts_at', [$selectedDate->startOfDay(), $selectedDate->endOfDay()])
             ->orderBy('starts_at')
-            ->get()
-            ->groupBy(fn (Fixture $fixture): string => $fixture->starts_at->format('Y-m-d'));
+            ->get();
 
-        return view('home', ['fixturesByDate' => $fixtures]);
+        return view('home', [
+            'fixtures' => $fixtures,
+            'selectedDate' => $selectedDate,
+            'isToday' => $selectedDate->isToday(),
+        ]);
     }
 }
