@@ -12,6 +12,10 @@
 @foreach($channels as $channel)
     <url><loc>{{ $channel->publicUrl() }}</loc><lastmod>{{ $channel->updated_at->toAtomString() }}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
 @endforeach
+    <url><loc>{{ route('competitions.index') }}</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+@foreach($competitions as $competition)
+    <url><loc>{{ $competition->publicUrl() }}</loc><lastmod>{{ $competition->updated_at->toAtomString() }}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+@endforeach
 @foreach($fixtures as $fixture)
     <url><loc>{{ $fixture->publicUrl() }}</loc><lastmod>{{ $fixture->updated_at->toAtomString() }}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
 @endforeach

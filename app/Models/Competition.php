@@ -14,6 +14,11 @@ class Competition extends Model
         return $this->local_logo_path ? asset('storage/'.$this->local_logo_path) : null;
     }
 
+    public function publicUrl(): string
+    {
+        return route('competitions.show', ['competition' => $this->slug]);
+    }
+
     public function fixtures(): HasMany
     {
         return $this->hasMany(Fixture::class);

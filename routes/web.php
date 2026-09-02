@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\ChannelController as AdminChannelController;
 use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\FixtureController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
@@ -19,6 +20,8 @@ Route::get('/times', [TeamController::class, 'index'])->name('teams.index');
 Route::get('/time/{team:slug}', [TeamController::class, 'show'])->name('teams.show');
 Route::get('/canais', [ChannelController::class, 'index'])->name('channels.index');
 Route::get('/canal/{channel:slug}', [ChannelController::class, 'show'])->name('channels.show');
+Route::get('/campeonatos', [CompetitionController::class, 'index'])->name('competitions.index');
+Route::get('/campeonato/{competition:slug}', [CompetitionController::class, 'show'])->name('competitions.show');
 Route::get('/sobre', [PageController::class, 'about'])->name('pages.about');
 Route::get('/contato', [PageController::class, 'contact'])->name('pages.contact');
 Route::get('/politica-de-privacidade', [PageController::class, 'privacy'])->name('pages.privacy');
