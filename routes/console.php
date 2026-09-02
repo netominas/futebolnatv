@@ -14,4 +14,10 @@ if (config('services.wosti.sync_enabled')) {
         ->timezone('America/Sao_Paulo')
         ->withoutOverlapping(20)
         ->onOneServer();
+
+    Schedule::command('wosti:sync-logos')
+        ->dailyAt('04:30')
+        ->timezone('America/Sao_Paulo')
+        ->withoutOverlapping(30)
+        ->onOneServer();
 }

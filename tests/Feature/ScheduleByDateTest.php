@@ -17,12 +17,15 @@ class ScheduleByDateTest extends TestCase
     public function test_home_displays_only_todays_televised_fixtures(): void
     {
         $this->fixture('Jogo de Hoje', today()->setHour(20));
+        $this->fixture('Outro Jogo de Hoje', today()->setHour(21));
         $tomorrow = $this->fixture('Jogo de Amanhã', today()->addDay()->setHour(20));
 
         $this->get('/')
             ->assertOk()
             ->assertSee('Jogo de Hoje')
-            ->assertDontSee('Jogo de Amanhã');
+            ->assertDontSee('Jogo de Amanhã')
+            ->assertViewHas('fixturesByCompetition', fn ($groups): bool => $groups->count() === 1
+                && $groups->first()->count() === 2);
 
         $this->get(route('fixtures.by-date', ['date' => today()->addDay()->format('Y-m-d')]))
             ->assertOk()

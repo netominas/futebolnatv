@@ -52,23 +52,46 @@
                 {{ $selectedDate->translatedFormat('l, d \d\e F \d\e Y') }}
             </h2>
 
-            @if ($fixtures->isNotEmpty())
-                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                    @foreach ($fixtures as $fixture)
-                        <article class="grid gap-3 border-b border-slate-100 p-4 last:border-b-0 sm:grid-cols-[5rem_1fr_14rem] sm:items-center">
-                            <time datetime="{{ $fixture->starts_at->toIso8601String() }}" class="text-xl font-black text-emerald-800">
-                                {{ $fixture->starts_at->format('H:i') }}
-                            </time>
-                            <div>
-                                <p class="text-xs font-bold uppercase tracking-wide text-slate-500">{{ $fixture->competition->name }}</p>
-                                <h3 class="mt-1 font-bold">{{ $fixture->homeTeam->name }} <span class="font-normal text-slate-400">x</span> {{ $fixture->awayTeam->name }}</h3>
-                            </div>
-                            <div class="flex flex-wrap gap-2 sm:justify-end">
-                                @foreach ($fixture->channels as $channel)
-                                    <span class="rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-900">{{ $channel->name }}</span>
-                                @endforeach
-                            </div>
-                        </article>
+            @if ($fixturesByCompetition->isNotEmpty())
+                <div class="space-y-6">
+                    @foreach ($fixturesByCompetition as $leagueFixtures)
+                        @php($competition = $leagueFixtures->first()->competition)
+                        <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="competition-{{ $competition->id }}">
+                            <header class="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3">
+                                @if ($competition->logoSource())
+                                    <img src="{{ $competition->logoSource() }}" alt="Logo {{ $competition->name }}" width="32" height="32" class="h-8 w-8 object-contain">
+                                @endif
+                                <h3 id="competition-{{ $competition->id }}" class="font-black">{{ $competition->name }}</h3>
+                                <span class="ml-auto text-sm text-slate-500">{{ $leagueFixtures->count() }} {{ $leagueFixtures->count() === 1 ? 'jogo' : 'jogos' }}</span>
+                            </header>
+
+                            @foreach ($leagueFixtures as $fixture)
+                                <article class="grid gap-4 border-b border-slate-100 p-4 last:border-b-0 sm:grid-cols-[5rem_1fr_14rem] sm:items-center">
+                                    <time datetime="{{ $fixture->starts_at->toIso8601String() }}" class="text-xl font-black text-emerald-800">
+                                        {{ $fixture->starts_at->format('H:i') }}
+                                    </time>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center gap-2 font-bold">
+                                            @if ($fixture->homeTeam->logoSource())
+                                                <img src="{{ $fixture->homeTeam->logoSource() }}" alt="Escudo {{ $fixture->homeTeam->name }}" width="28" height="28" class="h-7 w-7 object-contain" loading="lazy">
+                                            @endif
+                                            <span>{{ $fixture->homeTeam->name }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 font-bold">
+                                            @if ($fixture->awayTeam->logoSource())
+                                                <img src="{{ $fixture->awayTeam->logoSource() }}" alt="Escudo {{ $fixture->awayTeam->name }}" width="28" height="28" class="h-7 w-7 object-contain" loading="lazy">
+                                            @endif
+                                            <span>{{ $fixture->awayTeam->name }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 sm:justify-end">
+                                        @foreach ($fixture->channels as $channel)
+                                            <span class="rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-900">{{ $channel->name }}</span>
+                                        @endforeach
+                                    </div>
+                                </article>
+                            @endforeach
+                        </section>
                     @endforeach
                 </div>
             @else

@@ -34,7 +34,7 @@ class HomeController extends Controller
     private function scheduleFor(CarbonImmutable $selectedDate): View
     {
         $fixtures = Fixture::query()
-            ->with(['competition:id,name', 'homeTeam:id,name', 'awayTeam:id,name', 'channels:id,name'])
+            ->with(['competition:id,name,local_logo_path', 'homeTeam:id,name,local_logo_path', 'awayTeam:id,name,local_logo_path', 'channels:id,name'])
             ->where('is_listed', true)
             ->whereHas('channels')
             ->whereBetween('starts_at', [$selectedDate->startOfDay(), $selectedDate->endOfDay()])
@@ -42,7 +42,7 @@ class HomeController extends Controller
             ->get();
 
         return view('home', [
-            'fixtures' => $fixtures,
+            'fixturesByCompetition' => $fixtures->groupBy('competition_id'),
             'selectedDate' => $selectedDate,
             'isToday' => $selectedDate->isToday(),
         ]);
