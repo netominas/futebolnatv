@@ -18,7 +18,7 @@ class ChannelPageTest extends TestCase
         $competition = Competition::create(['wosti_id' => 1, 'name' => 'Liga', 'slug' => 'liga']);
         $home = Team::create(['wosti_id' => 1, 'name' => 'Azul', 'slug' => 'azul']);
         $away = Team::create(['wosti_id' => 2, 'name' => 'Branco', 'slug' => 'branco']);
-        $channel = BroadcastChannel::create(['wosti_id' => 1, 'name' => 'TV Azul', 'slug' => 'tv-azul']);
+        $channel = BroadcastChannel::create(['wosti_id' => 1, 'name' => 'TV Azul', 'slug' => 'tv-azul', 'external_url' => 'https://example.com/assinar']);
         foreach (range(1, 12) as $index) {
             $fixture = Fixture::create(['wosti_id' => $index, 'competition_id' => $competition->id, 'home_team_id' => $home->id, 'away_team_id' => $away->id, 'starts_at' => now()->subDays($index), 'is_listed' => true, 'last_seen_at' => now()]);
             $fixture->channels()->attach($channel);
@@ -27,7 +27,7 @@ class ChannelPageTest extends TestCase
         $next->channels()->attach($channel);
 
         $this->get(route('channels.index'))->assertOk()->assertSee('TV Azul');
-        $this->get($channel->publicUrl())->assertOk()->assertSee('Jogos no TV Azul')->assertViewHas('pastFixtures', fn ($fixtures) => $fixtures->count() === 10);
+        $this->get($channel->publicUrl())->assertOk()->assertSee('Jogos no TV Azul')->assertSee('https://example.com/assinar')->assertSee('nofollow sponsored noopener', false)->assertViewHas('pastFixtures', fn ($fixtures) => $fixtures->count() === 10);
         $this->get(route('fixtures.by-date', ['date' => $next->starts_at->format('Y-m-d')]))->assertSee($channel->publicUrl());
         $this->get('/sitemap.xml')->assertSee($channel->publicUrl());
     }

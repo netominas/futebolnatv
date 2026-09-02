@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\ChannelController as AdminChannelController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\FixtureController;
 use App\Http\Controllers\HomeController;
@@ -20,3 +22,12 @@ Route::get('/jogos', [HomeController::class, 'redirectToDate'])->name('fixtures.
 Route::get('/jogos/{date}', [HomeController::class, 'byDate'])
     ->where('date', '\\d{4}-\\d{2}-\\d{2}')
     ->name('fixtures.by-date');
+Route::middleware('guest')->group(function () {
+    Route::get('/admin/login', [AdminAuthController::class, 'create'])->name('admin.login');
+    Route::post('/admin/login', [AdminAuthController::class, 'store'])->middleware('throttle:5,1')->name('admin.login.store');
+});
+Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
+    Route::get('/canais', [AdminChannelController::class, 'index'])->name('channels.index');
+    Route::put('/canais/{channel}', [AdminChannelController::class, 'update'])->name('channels.update');
+    Route::post('/sair', [AdminAuthController::class, 'destroy'])->name('logout');
+});
