@@ -1,108 +1,33 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Jogos de futebol com transmissão na TV e no streaming em {{ $selectedDate->translatedFormat('d \d\e F \d\e Y') }}.">
-    <link rel="canonical" href="{{ $isToday ? route('home') : route('fixtures.by-date', ['date' => $selectedDate->format('Y-m-d')]) }}">
-    <title>{{ $isToday ? 'Futebol na TV hoje' : 'Futebol na TV em '.$selectedDate->format('d/m/Y') }}: jogos e onde assistir</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="min-h-screen bg-slate-100 text-slate-950 antialiased">
-    <header class="bg-emerald-950 text-white">
-        <div class="mx-auto max-w-5xl px-4 py-6">
-            <a href="{{ route('home') }}" class="text-2xl font-black tracking-tight">Futebol na TV</a>
-            <p class="mt-1 text-sm text-emerald-100">Jogos televisionados e onde assistir no Brasil</p>
-        </div>
-    </header>
-
-    <main class="mx-auto max-w-5xl px-4 py-8">
-        <div class="mb-6">
-            <p class="text-sm font-bold uppercase tracking-wide text-emerald-800">Programação por data</p>
-            <h1 class="mt-1 text-3xl font-black tracking-tight">
-                {{ $isToday ? 'Jogos na TV hoje' : 'Jogos na TV em '.$selectedDate->translatedFormat('d \d\e F') }}
-            </h1>
-            <p class="mt-2 max-w-2xl text-slate-600">Somente partidas com transmissão informada pela Wosti para o Brasil.</p>
-        </div>
-
-        <nav class="mb-6 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-[1fr_auto_1fr] sm:items-center" aria-label="Navegação por data">
-            <a href="{{ route('fixtures.by-date', ['date' => $selectedDate->subDay()->format('Y-m-d')]) }}" class="rounded-xl border border-slate-200 px-4 py-2 text-center font-semibold hover:bg-slate-50 sm:text-left">
-                ← Dia anterior
-            </a>
-
-            <form method="get" action="{{ route('fixtures.redirect-to-date') }}" class="flex items-center justify-center gap-2">
-                <label for="data" class="sr-only">Escolher data</label>
-                <input id="data" name="data" type="date" value="{{ $selectedDate->format('Y-m-d') }}" class="rounded-xl border border-slate-300 px-3 py-2 font-semibold">
-                <button type="submit" class="rounded-xl bg-emerald-800 px-4 py-2 font-bold text-white hover:bg-emerald-700">Ver</button>
-            </form>
-
-            <a href="{{ route('fixtures.by-date', ['date' => $selectedDate->addDay()->format('Y-m-d')]) }}" class="rounded-xl border border-slate-200 px-4 py-2 text-center font-semibold hover:bg-slate-50 sm:text-right">
-                Próximo dia →
-            </a>
-        </nav>
-
-        @unless ($isToday)
-            <div class="mb-5 text-center">
-                <a href="{{ route('home') }}" class="font-bold text-emerald-800 hover:underline">Voltar aos jogos de hoje</a>
-            </div>
-        @endunless
-
-        <section aria-labelledby="selected-date">
-            <h2 id="selected-date" class="mb-3 text-lg font-bold capitalize">
-                {{ $selectedDate->translatedFormat('l, d \d\e F \d\e Y') }}
-            </h2>
-
-            @if ($fixturesByCompetition->isNotEmpty())
-                <div class="space-y-6">
-                    @foreach ($fixturesByCompetition as $leagueFixtures)
-                        @php($competition = $leagueFixtures->first()->competition)
-                        <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="competition-{{ $competition->id }}">
-                            <header class="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3">
-                                @if ($competition->logoSource())
-                                    <img src="{{ $competition->logoSource() }}" alt="Logo {{ $competition->name }}" width="32" height="32" class="h-8 w-8 object-contain">
-                                @endif
-                                <h3 id="competition-{{ $competition->id }}" class="font-black">{{ $competition->name }}</h3>
-                                <span class="ml-auto text-sm text-slate-500">{{ $leagueFixtures->count() }} {{ $leagueFixtures->count() === 1 ? 'jogo' : 'jogos' }}</span>
-                            </header>
-
-                            @foreach ($leagueFixtures as $fixture)
-                                <article class="grid gap-4 border-b border-slate-100 p-4 last:border-b-0 sm:grid-cols-[5rem_1fr_14rem] sm:items-center">
-                                    <time datetime="{{ $fixture->starts_at->toIso8601String() }}" class="text-xl font-black text-emerald-800">
-                                        {{ $fixture->starts_at->format('H:i') }}
-                                    </time>
-                                    <div class="space-y-2">
-                                        <div class="flex items-center gap-2 font-bold">
-                                            @if ($fixture->homeTeam->logoSource())
-                                                <img src="{{ $fixture->homeTeam->logoSource() }}" alt="Escudo {{ $fixture->homeTeam->name }}" width="28" height="28" class="h-7 w-7 object-contain" loading="lazy">
-                                            @endif
-                                            <span>{{ $fixture->homeTeam->name }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-2 font-bold">
-                                            @if ($fixture->awayTeam->logoSource())
-                                                <img src="{{ $fixture->awayTeam->logoSource() }}" alt="Escudo {{ $fixture->awayTeam->name }}" width="28" height="28" class="h-7 w-7 object-contain" loading="lazy">
-                                            @endif
-                                            <span>{{ $fixture->awayTeam->name }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2 sm:justify-end">
-                                        @foreach ($fixture->channels as $channel)
-                                            <span class="rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-900">{{ $channel->name }}</span>
-                                        @endforeach
-                                    </div>
-                                </article>
-                            @endforeach
-                        </section>
-                    @endforeach
-                </div>
-            @else
-                <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-                    <h2 class="text-xl font-bold">Nenhum jogo na TV nesta data</h2>
-                    <p class="mt-2 text-slate-600">A Wosti ainda não informou partidas televisionadas para este dia.</p>
-                </div>
-            @endif
-        </section>
-
-        <p class="mt-8 text-sm text-slate-500">Horários de Brasília. A programação pode ser alterada pelos canais sem aviso prévio.</p>
-    </main>
-</body>
-</html>
+<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0756b9">
+<meta name="description" content="Jogos de futebol com transmissão na TV e streaming em {{ $selectedDate->translatedFormat('d/m/Y') }}.">
+<link rel="canonical" href="{{ $isToday ? route('home') : route('fixtures.by-date', ['date' => $selectedDate->format('Y-m-d')]) }}">
+<title>{{ $isToday ? 'Futebol na TV hoje' : 'Futebol na TV em '.$selectedDate->format('d/m/Y') }}: jogos e onde assistir</title>@vite(['resources/css/app.css','resources/js/app.js'])</head>
+<body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">
+<header class="brand-header text-white"><div class="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
+<a href="{{ route('home') }}" class="flex items-center gap-3"><span class="grid h-12 w-12 place-items-center rounded-2xl border border-white/20 bg-white/15 shadow-lg">@include('partials.ball-icon')</span><span><strong class="block text-xl font-black tracking-tight sm:text-2xl">Futebol na TV</strong><small class="text-blue-100">Seu guia de transmissões ao vivo</small></span></a>
+<span class="hidden items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold sm:flex"><i class="h-2 w-2 rounded-full bg-emerald-300"></i> Programação atualizada</span>
+</div></header>
+<main><section class="hero-panel border-b border-blue-100"><div class="mx-auto max-w-6xl px-4 pb-16 pt-11 sm:px-6"><div class="max-w-3xl">
+<p class="mb-4 inline-flex rounded-full border border-blue-200 bg-white/80 px-3 py-1.5 text-xs font-extrabold uppercase tracking-widest text-blue-700">Programação por data</p>
+<h1 class="text-4xl font-black tracking-[-.045em] sm:text-5xl">{{ $isToday ? 'Jogos na TV hoje' : 'Jogos na TV em '.$selectedDate->translatedFormat('d \\d\\e F') }}</h1>
+<p class="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">Todos os jogos com transmissão confirmada para o Brasil, organizados por campeonato e canal.</p>
+</div></div></section>
+<div class="mx-auto max-w-6xl px-4 pb-14 sm:px-6">
+<nav class="date-nav -mt-7 mb-9 grid gap-3 rounded-2xl border border-white bg-white p-3 shadow-xl shadow-slate-900/[.07] sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:p-4" aria-label="Navegação por data">
+<a class="date-link sm:justify-start" href="{{ route('fixtures.by-date',['date'=>$selectedDate->subDay()->format('Y-m-d')]) }}">‹ <span>Dia anterior</span></a>
+<form method="get" action="{{ route('fixtures.redirect-to-date') }}" class="date-form flex min-w-0 items-center gap-2 rounded-xl bg-slate-50 p-1.5 ring-1 ring-slate-200"><label for="data" class="sr-only">Escolher data</label><span class="pl-2 text-blue-600">▣</span><input id="data" name="data" type="date" value="{{ $selectedDate->format('Y-m-d') }}" class="min-w-0 flex-1 bg-transparent px-1 py-2 text-sm font-bold outline-none sm:w-36"><button class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-extrabold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700">Ver</button></form>
+<a class="date-link sm:justify-end" href="{{ route('fixtures.by-date',['date'=>$selectedDate->addDay()->format('Y-m-d')]) }}"><span>Próximo dia</span> ›</a></nav>
+@unless($isToday)<div class="mb-6 text-center"><a href="{{ route('home') }}" class="text-sm font-extrabold text-blue-700">Voltar aos jogos de hoje</a></div>@endunless
+<section aria-labelledby="selected-date"><div class="mb-5 flex items-center gap-3"><span class="grid h-10 w-10 place-items-center rounded-xl bg-blue-100 text-blue-700">▣</span><div><p class="text-xs font-bold uppercase tracking-widest text-slate-400">Agenda do dia</p><h2 id="selected-date" class="text-lg font-black capitalize tracking-tight sm:text-xl">{{ $selectedDate->translatedFormat('l, d \\d\\e F \\d\\e Y') }}</h2></div></div>
+@if($fixturesByCompetition->isNotEmpty())<div class="space-y-5">@foreach($fixturesByCompetition as $leagueFixtures) @php($competition=$leagueFixtures->first()->competition)
+<section class="league-card overflow-hidden rounded-2xl border border-slate-200/80 bg-white" aria-labelledby="competition-{{ $competition->id }}">
+<header class="flex items-center gap-3 border-b border-slate-100 bg-slate-50/70 px-4 py-3.5 sm:px-5"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white shadow-sm">@if($competition->logoSource())<img src="{{ $competition->logoSource() }}" alt="Logo {{ $competition->name }}" class="h-7 w-7 object-contain">@endif</span><h3 id="competition-{{ $competition->id }}" class="min-w-0 truncate font-black">{{ $competition->name }}</h3><span class="ml-auto shrink-0 rounded-full bg-blue-50 px-3 py-1 text-xs font-extrabold text-blue-700">{{ $leagueFixtures->count() }} {{ $leagueFixtures->count()===1?'jogo':'jogos' }}</span></header>
+<div class="divide-y divide-slate-100">@foreach($leagueFixtures as $fixture)<article class="fixture-row grid gap-4 px-4 py-4 sm:grid-cols-[5.5rem_minmax(0,1fr)_minmax(12rem,auto)] sm:items-center sm:px-5">
+<time datetime="{{ $fixture->starts_at->toIso8601String() }}" class="flex items-center gap-2 text-xl font-black text-blue-700 sm:border-r sm:border-slate-100 sm:py-2"><i class="h-8 w-1 rounded-full bg-blue-500"></i>{{ $fixture->starts_at->format('H:i') }}</time>
+<div class="space-y-2.5">@foreach([$fixture->homeTeam,$fixture->awayTeam] as $team)<div class="flex min-w-0 items-center gap-3 font-bold text-slate-800"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-50">@if($team->logoSource())<img src="{{ $team->logoSource() }}" alt="Escudo {{ $team->name }}" class="h-7 w-7 object-contain" loading="lazy">@endif</span><span class="truncate">{{ $team->name }}</span></div>@endforeach</div>
+<div class="flex flex-wrap gap-2 sm:justify-end">@foreach($fixture->channels as $channel)<span class="channel-pill inline-flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2 text-xs font-extrabold text-blue-800"><span>▻</span>{{ $channel->name }}</span>@endforeach</div>
+</article>@endforeach</div></section>@endforeach</div>
+@else<div class="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm"><span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-blue-50 text-blue-600">@include('partials.ball-icon')</span><h2 class="mt-4 text-xl font-black">Nenhum jogo na TV nesta data</h2><p class="mt-2 text-slate-600">Ainda não há partidas com transmissão informada para este dia.</p></div>@endif</section>
+<footer class="mt-10 flex flex-col gap-2 border-t border-slate-200 pt-6 text-sm text-slate-500 sm:flex-row sm:justify-between"><p>Horários de Brasília. A programação pode sofrer alterações.</p><p class="font-bold text-slate-600">Futebol na TV · Onde assistir</p></footer>
+</div></main></body></html>
