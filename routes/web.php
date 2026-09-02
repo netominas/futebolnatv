@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\FixtureController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SitemapController;
@@ -13,6 +14,8 @@ Route::get('/jogo/{slug}-{fixture}', FixtureController::class)
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/times', [TeamController::class, 'index'])->name('teams.index');
 Route::get('/time/{team:slug}', [TeamController::class, 'show'])->name('teams.show');
+Route::get('/canais', [ChannelController::class, 'index'])->name('channels.index');
+Route::get('/canal/{channel:slug}', [ChannelController::class, 'show'])->name('channels.show');
 Route::get('/jogos', [HomeController::class, 'redirectToDate'])->name('fixtures.redirect-to-date');
 Route::get('/jogos/{date}', [HomeController::class, 'byDate'])
     ->where('date', '\\d{4}-\\d{2}-\\d{2}')

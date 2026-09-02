@@ -9,6 +9,11 @@ class BroadcastChannel extends Model
 {
     protected $fillable = ['wosti_id', 'name', 'slug', 'image'];
 
+    public function publicUrl(): string
+    {
+        return route('channels.show', ['channel' => $this->slug]);
+    }
+
     public function fixtures(): BelongsToMany
     {
         return $this->belongsToMany(Fixture::class)->withTimestamps();

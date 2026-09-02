@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BroadcastChannel;
 use App\Models\Fixture;
 use App\Models\Team;
 use Illuminate\Http\Response;
@@ -23,8 +24,13 @@ class SitemapController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'slug', 'updated_at']);
 
+        $channels = BroadcastChannel::query()
+            ->whereHas('fixtures', fn ($query) => $query->where('is_listed', true))
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug', 'updated_at']);
+
         return response()
-            ->view('sitemap', compact('fixtures', 'teams'))
+            ->view('sitemap', compact('channels', 'fixtures', 'teams'))
             ->header('Content-Type', 'application/xml; charset=UTF-8')
             ->header('Cache-Control', 'public, max-age=3600');
     }

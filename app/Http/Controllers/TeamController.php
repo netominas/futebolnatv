@@ -21,7 +21,7 @@ class TeamController extends Controller
     public function show(Team $team): View
     {
         $baseQuery = fn () => Fixture::query()
-            ->with(['competition:id,name,local_logo_path', 'homeTeam:id,name,slug,local_logo_path', 'awayTeam:id,name,slug,local_logo_path', 'channels:id,name'])
+            ->with(['competition:id,name,local_logo_path', 'homeTeam:id,name,slug,local_logo_path', 'awayTeam:id,name,slug,local_logo_path', 'channels:id,name,slug'])
             ->where('is_listed', true)
             ->whereHas('channels')
             ->where(fn ($query) => $query->where('home_team_id', $team->id)->orWhere('away_team_id', $team->id));
