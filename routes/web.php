@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ChannelController as AdminChannelController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\FixtureController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,12 @@ Route::get('/times', [TeamController::class, 'index'])->name('teams.index');
 Route::get('/time/{team:slug}', [TeamController::class, 'show'])->name('teams.show');
 Route::get('/canais', [ChannelController::class, 'index'])->name('channels.index');
 Route::get('/canal/{channel:slug}', [ChannelController::class, 'show'])->name('channels.show');
+Route::get('/sobre', [PageController::class, 'about'])->name('pages.about');
+Route::get('/contato', [PageController::class, 'contact'])->name('pages.contact');
+Route::get('/politica-de-privacidade', [PageController::class, 'privacy'])->name('pages.privacy');
+Route::get('/politica-de-cookies', [PageController::class, 'cookies'])->name('pages.cookies');
+Route::get('/termos-de-uso', [PageController::class, 'terms'])->name('pages.terms');
+Route::get('/politica-editorial', [PageController::class, 'editorial'])->name('pages.editorial');
 Route::get('/jogos', [HomeController::class, 'redirectToDate'])->name('fixtures.redirect-to-date');
 Route::get('/jogos/{date}', [HomeController::class, 'byDate'])
     ->where('date', '\\d{4}-\\d{2}-\\d{2}')

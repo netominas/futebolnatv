@@ -11,3 +11,4 @@ html{color-scheme:light}body{background:radial-gradient(circle at 8% 22%,rgb(219
 .league-card{box-shadow:0 8px 30px rgb(15 23 42/.045);transition:.18s}.league-card:hover{box-shadow:0 14px 36px rgb(15 23 42/.075)}.fixture-row{transition:.16s}.fixture-row:hover{background:rgb(248 250 252/.8)}.channel-pill{box-shadow:inset 0 0 0 1px rgb(147 197 253/.22)}
 @media(max-width:639px){.date-nav{grid-template-columns:1fr 1fr}.date-form{grid-column:1/-1;grid-row:1}.date-link{grid-row:2}}
 @media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+.legal-content{color:#475569;line-height:1.8}.legal-content h2{margin-top:2rem;margin-bottom:.6rem;color:#0f172a;font-size:1.25rem;font-weight:800;letter-spacing:-.02em}.legal-content p+p{margin-top:1rem}.legal-content a{color:#1d4ed8;font-weight:700;text-decoration:underline;text-underline-offset:3px}

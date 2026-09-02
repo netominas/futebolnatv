@@ -30,5 +30,5 @@
 <div class="flex flex-wrap gap-2 sm:justify-end">@foreach($fixture->channels as $channel)<a href="{{ $channel->publicUrl() }}" class="channel-pill relative z-20 inline-flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2 text-xs font-extrabold text-blue-800 hover:bg-blue-100 hover:underline"><span>▻</span>{{ $channel->name }}</a>@endforeach<span class="text-xs font-extrabold text-blue-600">Detalhes →</span></div>
 </article>@endforeach</div></section>@endforeach</div>
 @else<div class="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm"><span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-blue-50 text-blue-600">@include('partials.ball-icon')</span><h2 class="mt-4 text-xl font-black">Nenhum jogo na TV nesta data</h2><p class="mt-2 text-slate-600">Ainda não há partidas com transmissão informada para este dia.</p></div>@endif</section>
-<footer class="mt-10 flex flex-col gap-2 border-t border-slate-200 pt-6 text-sm text-slate-500 sm:flex-row sm:justify-between"><p>Horários de Brasília. A programação pode sofrer alterações.</p><p class="font-bold text-slate-600">Futebol na TV · Onde assistir</p></footer>
-</div></main></body></html>
+<div class="mt-10 border-t border-slate-200 pt-6 text-sm text-slate-500">Horários de Brasília. A programação pode sofrer alterações.</div>
+</div></main>@include('partials.legal-footer')</body></html>
