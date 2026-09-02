@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
 
 class Fixture extends Model
 {
@@ -45,5 +46,15 @@ class Fixture extends Model
     public function channels(): BelongsToMany
     {
         return $this->belongsToMany(BroadcastChannel::class)->withTimestamps();
+    }
+
+    public function seoSlug(): string
+    {
+        return Str::slug($this->homeTeam->name.' x '.$this->awayTeam->name);
+    }
+
+    public function publicUrl(): string
+    {
+        return route('fixtures.show', ['slug' => $this->seoSlug(), 'fixture' => $this->id]);
     }
 }
