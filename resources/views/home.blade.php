@@ -4,10 +4,7 @@
 <link rel="canonical" href="{{ $isToday ? route('home') : route('fixtures.by-date', ['date' => $selectedDate->format('Y-m-d')]) }}">
 <title>{{ $isToday ? 'Futebol na TV hoje: jogos e onde assistir ao vivo' : 'Futebol na TV em '.$selectedDate->format('d/m/Y').': jogos e onde assistir' }}</title><script type="application/ld+json">{!! json_encode(['@context'=>'https://schema.org','@type'=>'WebSite','name'=>'Futebol na TV','url'=>route('home'),'description'=>'Guia de jogos de futebol na TV e no streaming no Brasil.'], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>@vite(['resources/css/app.css','resources/js/app.js'])</head>
 <body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">
-<header class="brand-header text-white"><div class="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
-<a href="{{ route('home') }}" class="flex items-center gap-3"><span class="grid h-12 w-12 place-items-center rounded-2xl border border-white/20 bg-white/15 shadow-lg">@include('partials.ball-icon')</span><span><strong class="block text-xl font-black tracking-tight sm:text-2xl">Futebol na TV</strong><small class="text-blue-100">Seu guia de transmissões ao vivo</small></span></a>
-<span class="hidden items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold sm:flex"><i class="h-2 w-2 rounded-full bg-emerald-300"></i> Programação atualizada</span>
-</div></header>
+@include('partials.site-header')
 <main><section class="hero-panel border-b border-blue-100"><div class="mx-auto max-w-6xl px-4 pb-16 pt-11 sm:px-6"><div class="max-w-3xl">
 <p class="mb-4 inline-flex rounded-full border border-blue-200 bg-white/80 px-3 py-1.5 text-xs font-extrabold uppercase tracking-widest text-blue-700">Programação por data</p>
 <h1 class="text-4xl font-black tracking-[-.045em] sm:text-5xl">{{ $isToday ? 'Jogos na TV hoje' : 'Jogos na TV em '.$selectedDate->translatedFormat('d \\d\\e F') }}</h1>
