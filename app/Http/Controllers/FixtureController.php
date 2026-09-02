@@ -19,7 +19,7 @@ class FixtureController extends Controller
         }
 
         $relatedFixtures = Fixture::query()
-            ->with(['homeTeam:id,name,local_logo_path', 'awayTeam:id,name,local_logo_path', 'channels:id,name'])
+            ->with(['homeTeam:id,name,slug,local_logo_path', 'awayTeam:id,name,slug,local_logo_path', 'channels:id,name'])
             ->where('competition_id', $fixture->competition_id)
             ->where('is_listed', true)
             ->whereKeyNot($fixture->id)

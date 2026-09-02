@@ -22,7 +22,7 @@ class FixturePageTest extends TestCase
         $fixture = Fixture::create(['wosti_id' => 1, 'competition_id' => $competition->id, 'home_team_id' => $home->id, 'away_team_id' => $away->id, 'starts_at' => now()->addDay(), 'is_listed' => true, 'last_seen_at' => now()]);
         $fixture->channels()->attach($channel);
 
-        $this->get($fixture->publicUrl())->assertOk()->assertSee('Time Azul x Time Branco')->assertSee('application/ld+json', false)->assertSee('Canal Teste');
+        $this->get($fixture->publicUrl())->assertOk()->assertSee('Time Azul x Time Branco')->assertSee('application/ld+json', false)->assertSee('Canal Teste')->assertSee($home->publicUrl())->assertSee($away->publicUrl());
         $this->get(route('fixtures.show', ['slug' => 'url-incorreta', 'fixture' => $fixture]))->assertRedirect($fixture->publicUrl())->assertStatus(301);
         $this->get('/sitemap.xml')->assertOk()->assertHeader('Content-Type', 'application/xml; charset=UTF-8')->assertSee($fixture->publicUrl());
     }

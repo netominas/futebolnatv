@@ -1,5 +1,5 @@
-<a href="{{ $item->publicUrl() }}" class="group grid gap-3 border-b border-slate-100 px-4 py-4 last:border-0 hover:bg-slate-50 sm:grid-cols-[6rem_minmax(0,1fr)_auto] sm:items-center sm:px-5">
+<div class="group grid gap-3 border-b border-slate-100 px-4 py-4 last:border-0 hover:bg-slate-50 sm:grid-cols-[6rem_minmax(0,1fr)_auto] sm:items-center sm:px-5">
     <div><p class="text-sm font-black text-blue-700">{{ $item->starts_at->format('d/m/Y') }}</p><p class="text-xs font-bold capitalize text-slate-400">{{ $item->starts_at->translatedFormat('D') }} · {{ $item->starts_at->format('H:i') }}</p></div>
-    <div><p class="font-black text-slate-900">{{ $item->homeTeam->name }} <span class="mx-1 text-slate-300">x</span> {{ $item->awayTeam->name }}</p><p class="mt-1 text-xs font-semibold text-slate-500">{{ $item->competition->name }}</p></div>
-    <div class="flex flex-wrap gap-1.5 sm:max-w-56 sm:justify-end">@foreach($item->channels as $channel)<span class="rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-extrabold text-blue-700">{{ $channel->name }}</span>@endforeach<span class="self-center text-blue-500 transition group-hover:translate-x-1">→</span></div>
-</a>
+    <div><p class="font-black text-slate-900"><a href="{{ $item->homeTeam->publicUrl() }}" class="hover:text-blue-700 hover:underline">{{ $item->homeTeam->name }}</a> <span class="mx-1 text-slate-300">x</span> <a href="{{ $item->awayTeam->publicUrl() }}" class="hover:text-blue-700 hover:underline">{{ $item->awayTeam->name }}</a></p><p class="mt-1 text-xs font-semibold text-slate-500">{{ $item->competition->name }}</p></div>
+    <div class="flex flex-wrap items-center gap-1.5 sm:max-w-64 sm:justify-end">@foreach($item->channels as $channel)<span class="rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-extrabold text-blue-700">{{ $channel->name }}</span>@endforeach<a href="{{ $item->publicUrl() }}" class="text-xs font-extrabold text-blue-600 hover:underline">Ver jogo →</a></div>
+</div>
