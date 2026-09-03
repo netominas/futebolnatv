@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\BroadcastChannel;
 use App\Models\Competition;
 use App\Models\Team;
 use Illuminate\Console\Command;
@@ -15,7 +16,7 @@ class SyncWostiLogosCommand extends Command
 {
     protected $signature = 'wosti:sync-logos {--force : Baixa novamente os arquivos existentes}';
 
-    protected $description = 'Baixa e armazena localmente as logos de ligas e times da Wosti';
+    protected $description = 'Baixa e armazena localmente as logos de ligas, times e canais da Wosti';
 
     public function handle(): int
     {
@@ -23,6 +24,7 @@ class SyncWostiLogosCommand extends Command
 
         $this->syncModels(Competition::query(), 'competitions', $result);
         $this->syncModels(Team::query(), 'teams', $result);
+        $this->syncModels(BroadcastChannel::query(), 'channels', $result);
 
         $this->info("Logos Wosti: {$result['downloaded']} baixadas, {$result['existing']} existentes e {$result['failed']} falhas.");
 

@@ -7,7 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class BroadcastChannel extends Model
 {
-    protected $fillable = ['wosti_id', 'name', 'slug', 'image', 'external_url'];
+    protected $fillable = ['wosti_id', 'name', 'slug', 'image', 'local_logo_path', 'external_url'];
+
+    public function logoSource(): ?string
+    {
+        return $this->local_logo_path ? asset('storage/'.$this->local_logo_path) : null;
+    }
 
     public function publicUrl(): string
     {

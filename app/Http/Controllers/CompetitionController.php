@@ -21,7 +21,7 @@ class CompetitionController extends Controller
     public function show(Competition $competition): View
     {
         $baseQuery = fn () => $competition->fixtures()
-            ->with(['competition:id,name,slug,local_logo_path', 'homeTeam:id,name,slug,local_logo_path', 'awayTeam:id,name,slug,local_logo_path', 'channels:id,name,slug'])
+            ->with(['competition:id,name,slug,local_logo_path', 'homeTeam:id,name,slug,local_logo_path', 'awayTeam:id,name,slug,local_logo_path', 'channels:id,name,slug,local_logo_path'])
             ->where('is_listed', true)
             ->whereHas('channels');
 
