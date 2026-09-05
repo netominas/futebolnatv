@@ -13,7 +13,21 @@
 @include('partials.site-header')
 <main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
     <nav class="mb-6 text-sm font-bold text-blue-700"><a href="{{ route('home') }}">Início</a> <span class="mx-2 text-slate-300">/</span> Busca</nav>
-    <header class="mb-8"><p class="text-xs font-extrabold uppercase tracking-widest text-blue-700">Encontre sua transmissão</p><h1 class="mt-2 text-3xl font-black tracking-[-.04em] sm:text-4xl">@if($canSearch)Resultados para “{{ $query }}”@elseBuscar no Futebol na TV@endif</h1>@if($canSearch)<p class="mt-3 text-slate-600">{{ $total }} {{ $total === 1 ? 'resultado encontrado' : 'resultados encontrados' }}.</p>@else<p class="mt-3 text-slate-600">Digite pelo menos dois caracteres para pesquisar times, campeonatos e canais.</p>@endif</header>
+    <header class="mb-8">
+        <p class="text-xs font-extrabold uppercase tracking-widest text-blue-700">Encontre sua transmissão</p>
+        <h1 class="mt-2 text-3xl font-black tracking-[-.04em] sm:text-4xl">
+            @if($canSearch)
+                Resultados para “{{ $query }}”
+            @else
+                Buscar no Futebol na TV
+            @endif
+        </h1>
+        @if($canSearch)
+            <p class="mt-3 text-slate-600">{{ $total }} {{ $total === 1 ? 'resultado encontrado' : 'resultados encontrados' }}.</p>
+        @else
+            <p class="mt-3 text-slate-600">Digite pelo menos dois caracteres para pesquisar times, campeonatos e canais.</p>
+        @endif
+    </header>
 
     @if($canSearch && $total === 0)
         <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm"><h2 class="text-xl font-black">Nenhum resultado encontrado</h2><p class="mt-2 text-slate-600">Tente pesquisar por outro nome ou uma palavra mais curta.</p></div>
