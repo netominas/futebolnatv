@@ -24,6 +24,11 @@ class HomeController extends Controller
         return $this->scheduleFor($selectedDate);
     }
 
+    public function tomorrow(): View
+    {
+        return $this->scheduleFor(CarbonImmutable::tomorrow());
+    }
+
     public function redirectToDate(Request $request): RedirectResponse
     {
         $validated = $request->validate(['data' => ['required', 'date_format:Y-m-d']]);
@@ -41,10 +46,43 @@ class HomeController extends Controller
             ->orderBy('starts_at')
             ->get();
 
+        $isToday = $selectedDate->isToday();
+        $isTomorrow = $selectedDate->isTomorrow();
+        $formattedDate = $selectedDate->format('d/m/Y');
+
         return view('home', [
+            'canonicalUrl' => $this->scheduleUrl($selectedDate),
             'fixturesByCompetition' => $fixtures->groupBy('competition_id'),
             'selectedDate' => $selectedDate,
-            'isToday' => $selectedDate->isToday(),
+            'isToday' => $isToday,
+            'isTomorrow' => $isTomorrow,
+            'metaDescription' => match (true) {
+                $isToday => 'Futebol na TV hoje: veja os jogos ao vivo, horários e onde assistir cada partida na televisão e no streaming no Brasil.',
+                $isTomorrow => 'Jogos de amanhã na TV: confira partidas, horários e onde assistir futebol ao vivo na televisão e no streaming no Brasil.',
+                default => "Jogos de futebol na TV em {$formattedDate}: veja horários e onde assistir ao vivo no Brasil.",
+            },
+            'nextDateUrl' => $this->scheduleUrl($selectedDate->addDay()),
+            'pageHeading' => match (true) {
+                $isToday => 'Jogos na TV hoje',
+                $isTomorrow => 'Jogos de amanhã na TV',
+                default => 'Jogos na TV em '.$selectedDate->translatedFormat('d \\d\\e F'),
+            },
+            'pageTitle' => match (true) {
+                $isToday => 'Futebol na TV hoje: jogos e onde assistir ao vivo',
+                $isTomorrow => 'Jogos de amanhã na TV: horários e onde assistir ao vivo',
+                default => "Futebol na TV em {$formattedDate}: jogos e onde assistir",
+            },
+            'previousDateUrl' => $this->scheduleUrl($selectedDate->subDay()),
+            'seoDayLabel' => $isToday ? 'hoje' : ($isTomorrow ? 'amanhã' : $formattedDate),
         ]);
+    }
+
+    private function scheduleUrl(CarbonImmutable $date): string
+    {
+        return match (true) {
+            $date->isToday() => route('home'),
+            $date->isTomorrow() => route('fixtures.tomorrow'),
+            default => route('fixtures.by-date', ['date' => $date->format('Y-m-d')]),
+        };
     }
 }

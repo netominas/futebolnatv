@@ -32,10 +32,18 @@ class ScheduleByDateTest extends TestCase
             ->assertViewHas('fixturesByCompetition', fn ($groups): bool => $groups->count() === 1
                 && $groups->first()->count() === 2);
 
-        $this->get(route('fixtures.by-date', ['date' => today()->addDay()->format('Y-m-d')]))
+        $this->get(route('fixtures.tomorrow'))
             ->assertOk()
+            ->assertSee('Jogos de amanhã na TV')
+            ->assertSee('<link rel="canonical" href="'.route('fixtures.tomorrow').'">', false)
             ->assertSee('Jogo de Amanhã')
             ->assertDontSee('Jogo de Hoje');
+
+        $this->get(route('fixtures.by-date', ['date' => today()->addDay()->format('Y-m-d')]))
+            ->assertOk()
+            ->assertSee('<link rel="canonical" href="'.route('fixtures.tomorrow').'">', false);
+
+        $this->get('/sitemap.xml')->assertSee(route('fixtures.tomorrow'));
 
         $this->get(route('fixtures.redirect-to-date', ['data' => $tomorrow->starts_at->format('Y-m-d')]))
             ->assertRedirect(route('fixtures.by-date', ['date' => today()->addDay()->format('Y-m-d')]));

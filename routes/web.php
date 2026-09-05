@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('/buscar', SearchController::class)->name('search');
+Route::get('/jogos-de-amanha', [HomeController::class, 'tomorrow'])->name('fixtures.tomorrow');
 Route::get('/jogo/{slug}-{fixture}', FixtureController::class)
     ->where(['slug' => '[a-z0-9-]+', 'fixture' => '[0-9]+'])
     ->name('fixtures.show');
