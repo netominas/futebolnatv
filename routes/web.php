@@ -7,8 +7,8 @@ use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\FixtureController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
