@@ -15,6 +15,12 @@
 <a class="date-link sm:justify-start" href="{{ $previousDateUrl }}">‹ <span>Dia anterior</span></a>
 <form method="get" action="{{ route('fixtures.redirect-to-date') }}" class="date-form flex min-w-0 items-center gap-2 rounded-xl bg-slate-50 p-1.5 ring-1 ring-slate-200"><label for="data" class="sr-only">Escolher data</label><span class="pl-2 text-blue-600">▣</span><input id="data" name="data" type="date" value="{{ $selectedDate->format('Y-m-d') }}" class="min-w-0 flex-1 bg-transparent px-1 py-2 text-sm font-bold outline-none sm:w-36"><button class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-extrabold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700">Ver</button></form>
 <a class="date-link sm:justify-end" href="{{ $nextDateUrl }}"><span>Próximo dia</span> ›</a></nav>
+@if($isToday)
+<aside class="mb-7 flex flex-col gap-3 rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 to-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between" aria-label="Destaque da próxima programação">
+<div><p class="text-xs font-extrabold uppercase tracking-widest text-blue-600">Próxima programação</p><p class="mt-1 font-bold text-slate-600">Antecipe-se e confira as partidas televisionadas do próximo dia.</p></div>
+<a href="{{ route('fixtures.tomorrow') }}" class="inline-flex shrink-0 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700">Jogos de amanhã na TV <span class="ml-2">→</span></a>
+</aside>
+@endif
 @unless($isToday)<div class="mb-6 text-center"><a href="{{ route('home') }}" class="text-sm font-extrabold text-blue-700">Voltar aos jogos de hoje</a></div>@endunless
 <section aria-labelledby="selected-date"><div class="mb-5 flex items-center gap-3"><span class="grid h-10 w-10 place-items-center rounded-xl bg-blue-100 text-blue-700">▣</span><div><p class="text-xs font-bold uppercase tracking-widest text-slate-400">Agenda do dia</p><h2 id="selected-date" class="text-lg font-black capitalize tracking-tight sm:text-xl">{{ $selectedDate->translatedFormat('l, d \\d\\e F \\d\\e Y') }}</h2></div></div>
 @if($fixturesByCompetition->isNotEmpty())<div class="space-y-5">@foreach($fixturesByCompetition as $leagueFixtures) @php($competition=$leagueFixtures->first()->competition)

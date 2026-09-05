@@ -28,6 +28,8 @@ class ScheduleByDateTest extends TestCase
             ->assertSee(route('teams.index'))
             ->assertSee(route('competitions.index'))
             ->assertSee(route('channels.index'))
+            ->assertSee('Jogos de amanhã na TV')
+            ->assertSee(route('fixtures.tomorrow'))
             ->assertDontSee('Jogo de Amanhã')
             ->assertViewHas('fixturesByCompetition', fn ($groups): bool => $groups->count() === 1
                 && $groups->first()->count() === 2);
