@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class BrandingAssetsTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_brand_assets_are_available_and_rendered_in_header_and_footer(): void
     {
         $this->assertFileExists(public_path('favicon.ico'));
