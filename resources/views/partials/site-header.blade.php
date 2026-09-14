@@ -1,7 +1,7 @@
 <header class="brand-header text-white">
     <div class="relative z-10 mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6 sm:py-5 lg:flex-row lg:items-center">
         <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-3 self-start">
-            <span class="grid h-11 w-11 place-items-center rounded-2xl border border-white/20 bg-white/15">@include('partials.ball-icon')</span>
+            <span class="grid h-11 w-11 place-items-center rounded-2xl border border-white/20 bg-white/15"><img src="{{ asset('images/futebol-na-tv-logo.png') }}" alt="Futebol na TV" class="h-9 w-9 object-contain" width="36" height="36"></span>
             <span><strong class="block text-xl font-black">Futebol na TV</strong><small class="hidden text-blue-100 sm:block">Seu guia de transmissões ao vivo</small></span>
         </a>
         <form action="{{ route('search') }}" method="GET" role="search" class="relative w-full lg:ml-auto lg:max-w-xs">
