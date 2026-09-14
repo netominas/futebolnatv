@@ -8,7 +8,7 @@
 <div class="mb-4 flex items-end justify-between"><div><p class="text-xs font-bold uppercase tracking-widest text-blue-600">Agenda</p><h2 class="text-2xl font-black">Próximos jogos do {{ $team->name }} na TV</h2></div><span class="text-sm font-bold text-slate-400">{{ $upcomingFixtures->count() }} {{ $upcomingFixtures->count()===1?'partida':'partidas' }}</span></div>
 @if($nextFixture)
 <div class="mb-5 rounded-2xl border border-blue-100 bg-blue-50/70 px-5 py-4 text-slate-700">
-<h3 class="font-black text-slate-900">Resumo do próximo jogo do {{ $team->name }}</h3>
+<h3 class="font-black text-slate-900">Resumo da próxima partida</h3>
 <p class="mt-2 leading-7">O próximo jogo do <strong>{{ $team->name }}</strong> na TV será contra o <a href="{{ $nextOpponent->publicUrl() }}" class="font-bold text-blue-700 hover:underline">{{ $nextOpponent->name }}</a>, pela <a href="{{ $nextFixture->competition->publicUrl() }}" class="font-bold text-blue-700 hover:underline">{{ $nextFixture->competition->name }}</a>, em {{ $nextFixture->starts_at->translatedFormat('l, d \\d\\e F \\d\\e Y') }}, às <strong>{{ $nextFixture->starts_at->format('H:i') }}</strong>, no horário de Brasília. A transmissão está informada em @foreach($nextFixture->channels as $channel)<a href="{{ $channel->publicUrl() }}" class="font-bold text-blue-700 hover:underline">{{ $channel->name }}</a>{{ !$loop->last ? ($loop->remaining === 1 ? ' e ' : ', ') : '.' }}@endforeach</p>
 </div>
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">@foreach($upcomingFixtures as $item)@include('partials.team-fixture')@endforeach</div>

@@ -32,7 +32,7 @@ class TeamPageTest extends TestCase
             ->assertOk()
             ->assertSee('Jogos do Clube Azul')
             ->assertSee('Próximos jogos do Clube Azul na TV')
-            ->assertSee('Resumo do próximo jogo do Clube Azul')
+            ->assertSee('Resumo da próxima partida')
             ->assertSee('O próximo jogo do')
             ->assertSee('Clube Branco')
             ->assertSee('Liga')
