@@ -28,7 +28,16 @@ class TeamPageTest extends TestCase
         $next->channels()->attach($channel);
 
         $this->get(route('teams.index'))->assertOk()->assertSee('Clube Azul');
-        $this->get($team->publicUrl())->assertOk()->assertSee('Jogos do Clube Azul')->assertSee('Próximos jogos na TV')->assertViewHas('pastFixtures', fn ($fixtures) => $fixtures->count() === 10);
+        $this->get($team->publicUrl())
+            ->assertOk()
+            ->assertSee('Jogos do Clube Azul')
+            ->assertSee('Próximos jogos do Clube Azul na TV')
+            ->assertSee('Resumo do próximo jogo do Clube Azul')
+            ->assertSee('O próximo jogo do')
+            ->assertSee('Clube Branco')
+            ->assertSee('Liga')
+            ->assertSee('TV Teste')
+            ->assertViewHas('pastFixtures', fn ($fixtures) => $fixtures->count() === 10);
         $this->get('/sitemap.xml')->assertSee($team->publicUrl());
     }
 }
