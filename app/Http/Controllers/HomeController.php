@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fixture;
+use App\Services\FeaturedFixtures;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -10,6 +11,8 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+    public function __construct(private FeaturedFixtures $featuredFixtures) {}
+
     public function __invoke(): View
     {
         return $this->scheduleFor(CarbonImmutable::today());
@@ -53,6 +56,7 @@ class HomeController extends Controller
         return view('home', [
             'canonicalUrl' => $this->scheduleUrl($selectedDate),
             'fixturesByCompetition' => $fixtures->groupBy('competition_id'),
+            'featuredFixtures' => $this->featuredFixtures->select($fixtures),
             'selectedDate' => $selectedDate,
             'isToday' => $isToday,
             'isTomorrow' => $isTomorrow,
