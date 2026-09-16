@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="pt-BR"><head>
+<!DOCTYPE html><html lang="pt-BR"><head>@include('partials.google-tag-head')
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0756b9">
 <meta name="description" content="{{ $metaDescription }}">
 <link rel="canonical" href="{{ $canonicalUrl }}">
 <title>{{ $pageTitle }}</title><script type="application/ld+json">{!! json_encode(['@context'=>'https://schema.org','@type'=>'WebSite','name'=>'Futebol na TV','url'=>route('home'),'description'=>'Guia de jogos de futebol na TV e no streaming no Brasil.'], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>@vite(['resources/css/app.css','resources/js/app.js'])</head>
-<body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">
+<body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">@include('partials.google-tag-body')
 @include('partials.site-header')
 <main><section class="hero-panel border-b border-blue-100"><div class="mx-auto max-w-6xl px-4 pb-16 pt-11 sm:px-6"><div class="max-w-3xl">
 <p class="mb-4 inline-flex rounded-full border border-blue-200 bg-white/80 px-3 py-1.5 text-xs font-extrabold uppercase tracking-widest text-blue-700">Programação por data</p>

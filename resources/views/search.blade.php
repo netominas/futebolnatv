@@ -1,7 +1,7 @@
 @php($total=$teams->count()+$competitions->count()+$channels->count())
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+<head>@include('partials.google-tag-head')
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>{{ $canSearch ? 'Busca por '.$query : 'Buscar' }} | Futebol na TV</title>
@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex,follow">
     @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">
+<body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">@include('partials.google-tag-body')
 @include('partials.site-header')
 <main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
     <nav class="mb-6 text-sm font-bold text-blue-700"><a href="{{ route('home') }}">Início</a> <span class="mx-2 text-slate-300">/</span> Busca</nav>
