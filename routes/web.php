@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\ChannelController as AdminChannelController;
+use App\Http\Controllers\Admin\CompetitionController as AdminCompetitionController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\FixtureController;
@@ -42,5 +43,7 @@ Route::middleware('guest')->group(function () {
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::get('/canais', [AdminChannelController::class, 'index'])->name('channels.index');
     Route::put('/canais/{channel}', [AdminChannelController::class, 'update'])->name('channels.update');
+    Route::get('/campeonatos', [AdminCompetitionController::class, 'index'])->name('competitions.index');
+    Route::put('/campeonatos/{competition}', [AdminCompetitionController::class, 'update'])->name('competitions.update');
     Route::post('/sair', [AdminAuthController::class, 'destroy'])->name('logout');
 });

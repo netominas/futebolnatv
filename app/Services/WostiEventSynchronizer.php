@@ -102,7 +102,7 @@ class WostiEventSynchronizer
     /** @param array<string, mixed> $data */
     private function competition(array $data): Competition
     {
-        return Competition::updateOrCreate(
+        $competition = Competition::updateOrCreate(
             ['wosti_id' => (int) $data['Id']],
             [
                 'name' => (string) $data['Name'],
@@ -110,6 +110,15 @@ class WostiEventSynchronizer
                 'image' => $this->nullableString($data['Image'] ?? null),
             ],
         );
+
+        if ($competition->wasRecentlyCreated) {
+            $competition->update([
+                'display_priority' => config('competition_priorities.initial')[$competition->name]
+                    ?? config('competition_priorities.default'),
+            ]);
+        }
+
+        return $competition;
     }
 
     /** @param array<string, mixed> $data */

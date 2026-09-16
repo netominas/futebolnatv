@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Competition extends Model
 {
-    protected $fillable = ['wosti_id', 'name', 'slug', 'image', 'local_logo_path'];
+    protected $fillable = ['wosti_id', 'name', 'slug', 'image', 'local_logo_path', 'display_priority'];
 
     public function logoSource(): ?string
     {
