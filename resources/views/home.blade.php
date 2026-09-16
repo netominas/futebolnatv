@@ -5,23 +5,17 @@
 <title>{{ $pageTitle }}</title><script type="application/ld+json">{!! json_encode(['@context'=>'https://schema.org','@type'=>'WebSite','name'=>'Futebol na TV','url'=>route('home'),'description'=>'Guia de jogos de futebol na TV e no streaming no Brasil.'], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>@vite(['resources/css/app.css','resources/js/app.js'])</head>
 <body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">@include('partials.google-tag-body')
 @include('partials.site-header')
-<main><section class="hero-panel border-b border-blue-100"><div class="mx-auto max-w-6xl px-4 pb-16 pt-11 sm:px-6"><div class="max-w-3xl">
+<main><section class="hero-panel border-b border-blue-100"><div class="mx-auto max-w-6xl px-4 pb-8 pt-7 sm:px-6 sm:pb-16 sm:pt-11"><div class="max-w-3xl">
 <p class="mb-4 inline-flex rounded-full border border-blue-200 bg-white/80 px-3 py-1.5 text-xs font-extrabold uppercase tracking-widest text-blue-700">Programação por data</p>
 <h1 class="text-4xl font-black tracking-[-.045em] sm:text-5xl">{{ $pageHeading }}</h1>
 <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">Todos os jogos com transmissão confirmada para o Brasil, organizados por campeonato e canal.</p>
 </div></div></section>
-<div class="mx-auto max-w-6xl px-4 pb-14 sm:px-6">
-<nav class="date-nav -mt-7 mb-9 grid gap-3 rounded-2xl border border-white bg-white p-3 shadow-xl shadow-slate-900/[.07] sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:p-4" aria-label="Navegação por data">
+<div class="mx-auto max-w-6xl px-4 pb-14 pt-6 sm:px-6 sm:pt-0">
+<nav class="date-nav -mt-7 mb-9 hidden gap-3 rounded-2xl border border-white bg-white p-3 shadow-xl shadow-slate-900/[.07] sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:p-4" aria-label="Navegação por data">
 <a class="date-link sm:justify-start" href="{{ $previousDateUrl }}">‹ <span>Dia anterior</span></a>
 <form method="get" action="{{ route('fixtures.redirect-to-date') }}" class="date-form flex min-w-0 items-center gap-2 rounded-xl bg-slate-50 p-1.5 ring-1 ring-slate-200"><label for="data" class="sr-only">Escolher data</label><span class="pl-2 text-blue-600">▣</span><input id="data" name="data" type="date" value="{{ $selectedDate->format('Y-m-d') }}" class="min-w-0 flex-1 bg-transparent px-1 py-2 text-sm font-bold outline-none sm:w-36"><button class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-extrabold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700">Ver</button></form>
 <a class="date-link sm:justify-end" href="{{ $nextDateUrl }}"><span>Próximo dia</span> ›</a></nav>
-@if($isToday)
-<aside class="mb-7 flex flex-col gap-3 rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 to-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between" aria-label="Destaque da próxima programação">
-<div><p class="text-xs font-extrabold uppercase tracking-widest text-blue-600">Próxima programação</p><p class="mt-1 font-bold text-slate-600">Antecipe-se e confira as partidas televisionadas do próximo dia.</p></div>
-<a href="{{ route('fixtures.tomorrow') }}" class="inline-flex shrink-0 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700">Jogos de amanhã na TV <span class="ml-2">→</span></a>
-</aside>
-@endif
-@unless($isToday)<div class="mb-6 text-center"><a href="{{ route('home') }}" class="text-sm font-extrabold text-blue-700">Voltar aos jogos de hoje</a></div>@endunless
+@unless($isToday)<div class="mb-6 hidden text-center sm:block"><a href="{{ route('home') }}" class="text-sm font-extrabold text-blue-700">Voltar aos jogos de hoje</a></div>@endunless
 <section aria-labelledby="selected-date"><div class="mb-5 flex items-center gap-3"><span class="grid h-10 w-10 place-items-center rounded-xl bg-blue-100 text-blue-700">▣</span><div><p class="text-xs font-bold uppercase tracking-widest text-slate-400">Agenda do dia</p><h2 id="selected-date" class="text-lg font-black capitalize tracking-tight sm:text-xl">{{ $selectedDate->translatedFormat('l, d \\d\\e F \\d\\e Y') }}</h2></div></div>
 @if($fixturesByCompetition->isNotEmpty())<div class="space-y-5">@foreach($fixturesByCompetition as $leagueFixtures) @php($competition=$leagueFixtures->first()->competition)
 <section class="league-card overflow-hidden rounded-2xl border border-slate-200/80 bg-white" aria-labelledby="competition-{{ $competition->id }}">
@@ -33,6 +27,12 @@
 <div class="flex flex-wrap gap-2 sm:justify-end">@foreach($fixture->channels as $channel)<a href="{{ $channel->publicUrl() }}" class="channel-pill relative z-20 inline-flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2 text-xs font-extrabold text-blue-800 hover:bg-blue-100 hover:underline"><span>▻</span>{{ $channel->name }}</a>@endforeach</div>
 </article>@endforeach</div></section>@endforeach</div>
 @else<div class="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm"><span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-blue-50 text-blue-600">@include('partials.ball-icon')</span><h2 class="mt-4 text-xl font-black">Nenhum jogo na TV nesta data</h2><p class="mt-2 text-slate-600">Ainda não há partidas com transmissão informada para este dia.</p></div>@endif</section>
+@if($isToday)
+<aside class="mt-8 flex flex-col gap-3 rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 to-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between" aria-label="Destaque da próxima programação">
+<div><p class="text-xs font-extrabold uppercase tracking-widest text-blue-600">Próxima programação</p><p class="mt-1 font-bold text-slate-600">Antecipe-se e confira as partidas televisionadas do próximo dia.</p></div>
+<a href="{{ route('fixtures.tomorrow') }}" class="inline-flex shrink-0 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700">Jogos de amanhã na TV <span class="ml-2">→</span></a>
+</aside>
+@endif
 @if($featuredFixtures->isNotEmpty())
 <section class="mt-12" aria-labelledby="principais-jogos-tv">
 <div class="mb-6 max-w-3xl"><p class="text-xs font-extrabold uppercase tracking-[.16em] text-blue-600">Seleção do dia</p><h2 id="principais-jogos-tv" class="mt-2 text-2xl font-black tracking-[-.035em] text-slate-950 sm:text-3xl">Principais jogos na TV de {{ $seoDayLabel }}</h2><p class="mt-3 leading-7 text-slate-600">Entre as partidas com transmissão confirmada, selecionamos os confrontos de campeonatos de maior destaque na programação de {{ $selectedDate->translatedFormat('d \d\e F') }}.</p></div>
@@ -47,4 +47,10 @@
 <div class="grid gap-8 px-6 py-8 sm:px-9 lg:grid-cols-2 lg:gap-10"><div><h3 class="text-xl font-black text-slate-900">Jogos na TV e no streaming</h3><p class="mt-3 leading-7 text-slate-600">Nossa agenda inclui jogos exibidos na televisão aberta, TV por assinatura, canais esportivos e plataformas de streaming. Cada partida informa onde assistir, o horário de Brasília e a competição relacionada.</p><p class="mt-4 leading-7 text-slate-600">Você também pode navegar pelos <a href="{{ route('teams.index') }}" class="font-bold text-blue-700 hover:underline">times de futebol</a> ou consultar a programação organizada por <a href="{{ route('channels.index') }}" class="font-bold text-blue-700 hover:underline">canais de transmissão</a>.</p></div><div><h3 class="text-xl font-black text-slate-900">Como encontrar onde assistir futebol ao vivo?</h3><p class="mt-3 leading-7 text-slate-600">Use o seletor de datas para ver os jogos de hoje, de amanhã ou de qualquer outro dia disponível. As partidas ficam agrupadas por campeonato, facilitando a busca por futebol brasileiro, torneios internacionais e outras competições.</p><p class="mt-4 leading-7 text-slate-600">Ao abrir um jogo, você encontra um resumo com os times, data, horário e todos os canais informados para a transmissão.</p></div></div>
 <div class="grid border-t border-slate-100 bg-slate-50/70 sm:grid-cols-3"><div class="p-6 sm:border-r sm:border-slate-200"><h3 class="font-black text-slate-900">A programação é atualizada?</h3><p class="mt-2 text-sm leading-6 text-slate-600">Sim. Nossa base é sincronizada regularmente para acompanhar novos jogos e mudanças nos canais.</p></div><div class="border-t border-slate-200 p-6 sm:border-r sm:border-t-0"><h3 class="font-black text-slate-900">Os horários são de Brasília?</h3><p class="mt-2 text-sm leading-6 text-slate-600">Sim. Todos os horários publicados no guia seguem o fuso oficial de Brasília.</p></div><div class="border-t border-slate-200 p-6 sm:border-t-0"><h3 class="font-black text-slate-900">O site transmite os jogos?</h3><p class="mt-2 text-sm leading-6 text-slate-600">Não. Somos um guia informativo e indicamos as emissoras ou plataformas responsáveis pela transmissão.</p></div></div></section>
 <div class="mt-10 border-t border-slate-200 pt-6 text-sm text-slate-500">Horários de Brasília. A programação pode sofrer alterações.</div>
-</div></main>@include('partials.legal-footer')</body></html>
+</div>
+<dialog id="mobile-calendar" class="m-auto w-[calc(100%-2rem)] max-w-sm rounded-3xl border-0 bg-white p-0 text-slate-950 shadow-2xl backdrop:bg-slate-950/55 sm:hidden" aria-labelledby="mobile-calendar-title">
+<div class="p-5"><div class="flex items-center justify-between"><div><p class="text-xs font-extrabold uppercase tracking-widest text-blue-600">Programação</p><h2 id="mobile-calendar-title" class="mt-1 text-xl font-black">Escolha uma data</h2></div><button type="button" data-calendar-close aria-label="Fechar calendário" class="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-xl text-slate-600">×</button></div>
+<form method="get" action="{{ route('fixtures.redirect-to-date') }}" class="mt-5 space-y-3"><label for="mobile-date" class="text-sm font-bold text-slate-700">Data dos jogos</label><input id="mobile-date" name="data" type="date" value="{{ $selectedDate->format('Y-m-d') }}" class="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 font-bold outline-none focus:border-blue-500"><button class="h-12 w-full rounded-xl bg-blue-600 px-5 font-extrabold text-white shadow-md shadow-blue-600/20">Ver jogos desta data</button></form>
+<div class="mt-4 grid grid-cols-2 gap-2"><a href="{{ $previousDateUrl }}" class="date-link bg-slate-50">‹ Dia anterior</a><a href="{{ $nextDateUrl }}" class="date-link bg-slate-50">Próximo dia ›</a></div></div>
+</dialog>
+</main>@include('partials.legal-footer')</body></html>
