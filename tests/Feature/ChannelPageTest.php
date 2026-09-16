@@ -28,7 +28,10 @@ class ChannelPageTest extends TestCase
 
         $this->get(route('channels.index'))->assertOk()->assertSee('TV Azul');
         $this->get($channel->publicUrl())->assertOk()->assertSee('Jogos no TV Azul')->assertSee('https://example.com/assinar')->assertSee('nofollow sponsored noopener', false)->assertViewHas('pastFixtures', fn ($fixtures) => $fixtures->count() === 10);
-        $this->get(route('fixtures.by-date', ['date' => $next->starts_at->format('Y-m-d')]))->assertSee($channel->publicUrl());
+        $this->get(route('fixtures.by-date', ['date' => $next->starts_at->format('Y-m-d')]))
+            ->assertSee($next->publicUrl())
+            ->assertSee('Ver mais')
+            ->assertDontSee($channel->publicUrl());
         $this->get('/sitemap.xml')->assertSee($channel->publicUrl());
     }
 }
