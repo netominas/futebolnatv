@@ -16,7 +16,7 @@ class ScheduleByDateTest extends TestCase
 
     public function test_home_displays_only_todays_televised_fixtures(): void
     {
-        $this->fixture('Jogo de Hoje', today()->setHour(20));
+        $today = $this->fixture('Jogo de Hoje', today()->setHour(20));
         $this->fixture('Outro Jogo de Hoje', today()->setHour(21));
         $tomorrow = $this->fixture('Jogo de Amanhã', today()->addDay()->setHour(20));
 
@@ -31,6 +31,9 @@ class ScheduleByDateTest extends TestCase
             ->assertSee('Jogos de amanhã na TV')
             ->assertSee(route('fixtures.tomorrow'))
             ->assertDontSee('Jogo de Amanhã')
+            ->assertSee('Ver mais')
+            ->assertDontSee($today->homeTeam->publicUrl(), false)
+            ->assertDontSee($today->channels->first()->publicUrl(), false)
             ->assertSee('data-calendar-open', false)
             ->assertSee('id="mobile-calendar"', false)
             ->assertSeeInOrder(['Jogo de Hoje', 'Próxima programação'])
