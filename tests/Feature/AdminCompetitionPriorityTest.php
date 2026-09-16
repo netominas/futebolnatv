@@ -19,10 +19,17 @@ class AdminCompetitionPriorityTest extends TestCase
         $competition = $this->competition('Copa Libertadores', 1000);
 
         $this->get(route('admin.competitions.index'))->assertRedirect(route('admin.login'));
+        $this->get(route('admin.channels.index'))->assertRedirect(route('admin.login'));
 
-        $this->actingAs(User::factory()->create())
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
             ->put(route('admin.competitions.update', $competition), ['display_priority' => 10])
             ->assertRedirect();
+
+        $this->actingAs($user)
+            ->get(route('admin.login'))
+            ->assertRedirect(route('admin.competitions.index'));
 
         $this->assertDatabaseHas('competitions', ['id' => $competition->id, 'display_priority' => 10]);
     }
