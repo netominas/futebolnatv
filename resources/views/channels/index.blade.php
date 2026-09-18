@@ -6,7 +6,7 @@
     <title>Canais de futebol: programação de jogos ao vivo | Futebol na TV</title>
     <meta name="description" content="Consulte a programação de futebol na TV e streaming organizada por canal. Veja próximos jogos, horários e transmissões.">
     <link rel="canonical" href="{{ route('channels.index') }}">
-    @vite(['resources/css/app.css','resources/js/app.js'])
+    @include('partials.social-image-meta')@vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">@include('partials.google-tag-body')
 @include('partials.site-header')

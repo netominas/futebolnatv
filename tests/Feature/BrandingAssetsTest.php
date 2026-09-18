@@ -14,10 +14,13 @@ class BrandingAssetsTest extends TestCase
         $this->assertFileExists(public_path('favicon.ico'));
         $this->assertFileExists(public_path('images/favicon.png'));
         $this->assertFileExists(public_path('images/futebol-na-tv-logo.png'));
+        $this->assertFileExists(public_path('images/futebol-na-tv-social.png'));
 
         $this->get(route('home'))
             ->assertOk()
             ->assertSee(asset('images/futebol-na-tv-logo.png'), false)
+            ->assertSee('<meta property="og:image" content="'.asset('images/futebol-na-tv-social.png').'">', false)
+            ->assertSee('<meta name="twitter:card" content="summary_large_image">', false)
             ->assertSee('alt="Futebol na TV"', false);
     }
 }
