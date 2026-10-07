@@ -12,13 +12,13 @@ class ProgressiveWebAppTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('rel="manifest"', false);
-        $response->assertSee('/manifest.webmanifest', false);
+        $response->assertSee('/manifest.json', false);
         $response->assertSee('apple-mobile-web-app-capable', false);
     }
 
     public function test_pwa_public_files_are_valid(): void
     {
-        $manifest = json_decode(file_get_contents(public_path('manifest.webmanifest')), true, flags: JSON_THROW_ON_ERROR);
+        $manifest = json_decode(file_get_contents(public_path('manifest.json')), true, flags: JSON_THROW_ON_ERROR);
 
         $this->assertSame('standalone', $manifest['display']);
         $this->assertSame('/', $manifest['scope']);
