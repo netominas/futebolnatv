@@ -18,6 +18,7 @@ class ProgressiveWebAppTest extends TestCase
         $response->assertSee('/manifest.json', false);
         $response->assertSee('apple-mobile-web-app-capable', false);
         $response->assertSee('data-pwa-floating', false);
+        $response->assertSee('data-push-floating', false);
         $response->assertSee('name="webpush-public-key"', false);
     }
 

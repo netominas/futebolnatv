@@ -147,6 +147,11 @@ const getPushSubscription = async () => {
 const setPushUi = (subscribed) => {
     pushButtons.forEach((button) => {
         button.querySelector('[data-push-label]').textContent = subscribed ? 'Alertas ativos' : 'Ativar alertas';
+
+        if (button.hasAttribute('data-push-floating')) {
+            button.classList.toggle('hidden', subscribed);
+            button.classList.toggle('flex', !subscribed);
+        }
     });
     pushEnable?.classList.toggle('hidden', subscribed);
     pushDisable?.classList.toggle('hidden', !subscribed);
