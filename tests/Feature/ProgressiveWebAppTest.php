@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ProgressiveWebAppTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_home_exposes_pwa_metadata(): void
     {
         $response = $this->get('/');
@@ -15,6 +18,7 @@ class ProgressiveWebAppTest extends TestCase
         $response->assertSee('/manifest.json', false);
         $response->assertSee('apple-mobile-web-app-capable', false);
         $response->assertSee('data-pwa-floating', false);
+        $response->assertSee('name="webpush-public-key"', false);
     }
 
     public function test_pwa_public_files_are_valid(): void
