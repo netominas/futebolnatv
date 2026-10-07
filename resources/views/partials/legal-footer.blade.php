@@ -12,3 +12,20 @@
     </div>
     <div class="border-t border-slate-100 px-4 py-4 text-center text-xs text-slate-400">© {{ now()->year }} Futebol na TV. Todos os direitos reservados.</div>
 </footer>
+
+<button
+    type="button"
+    data-pwa-install
+    data-pwa-floating
+    aria-label="Instalar o aplicativo Futebol na TV"
+    class="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-50 hidden items-center gap-2.5 rounded-2xl border border-white/30 bg-blue-600 px-4 py-3 text-sm font-extrabold text-white shadow-[0_14px_40px_rgba(7,86,185,.38)] ring-4 ring-blue-100/80 transition hover:-translate-y-0.5 hover:bg-blue-700 active:translate-y-0 sm:hidden"
+>
+    <span class="grid h-8 w-8 place-items-center rounded-xl bg-white/15" aria-hidden="true">
+        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v11m0 0 4-4m-4 4-4-4"/>
+            <path d="M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/>
+        </svg>
+    </span>
+    <span>Instalar app</span>
+    <span class="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-emerald-400" aria-hidden="true"></span>
+</button>

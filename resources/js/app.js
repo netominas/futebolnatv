@@ -21,7 +21,12 @@ const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
 
 const showInstallButtons = () => {
     if (!isStandalone) {
-        installButtons.forEach((button) => button.classList.remove('hidden'));
+        installButtons.forEach((button) => {
+            button.classList.remove('hidden');
+            if (button.hasAttribute('data-pwa-floating')) {
+                button.classList.add('flex');
+            }
+        });
     }
 };
 
@@ -37,7 +42,10 @@ installButtons.forEach((button) => {
             installPrompt.prompt();
             await installPrompt.userChoice;
             installPrompt = null;
-            installButtons.forEach((item) => item.classList.add('hidden'));
+            installButtons.forEach((item) => {
+                item.classList.add('hidden');
+                item.classList.remove('flex');
+            });
             return;
         }
 
@@ -49,7 +57,10 @@ installButtons.forEach((button) => {
 
 window.addEventListener('appinstalled', () => {
     installPrompt = null;
-    installButtons.forEach((button) => button.classList.add('hidden'));
+    installButtons.forEach((button) => {
+        button.classList.add('hidden');
+        button.classList.remove('flex');
+    });
 });
 
 if (isIos) showInstallButtons();
