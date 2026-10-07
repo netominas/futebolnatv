@@ -111,7 +111,7 @@ if (isIos) showInstallButtons();
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js', { scope: '/' });
+        navigator.serviceWorker.register('/sw.js?v=2', { scope: '/', updateViaCache: 'none' });
     });
 }
 
