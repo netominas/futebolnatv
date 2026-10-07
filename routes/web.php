@@ -4,12 +4,14 @@ use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\ChannelController as AdminChannelController;
 use App\Http\Controllers\Admin\CompetitionController as AdminCompetitionController;
 use App\Http\Controllers\Admin\PwaInstallationController as AdminPwaInstallationController;
+use App\Http\Controllers\Admin\PushNotificationController as AdminPushNotificationController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\FixtureController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PwaInstallationController;
+use App\Http\Controllers\WebPushSubscriptionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
@@ -37,6 +39,9 @@ Route::get('/politica-editorial', [PageController::class, 'editorial'])->name('p
 Route::post('/pwa/instalacoes', [PwaInstallationController::class, 'store'])
     ->middleware('throttle:30,1')
     ->name('pwa-installations.store');
+Route::post('/push/assinar', [WebPushSubscriptionController::class, 'store'])->middleware('throttle:20,1')->name('push.store');
+Route::post('/push/status', [WebPushSubscriptionController::class, 'status'])->middleware('throttle:30,1')->name('push.status');
+Route::delete('/push/assinar', [WebPushSubscriptionController::class, 'destroy'])->middleware('throttle:20,1')->name('push.destroy');
 Route::get('/jogos', [HomeController::class, 'redirectToDate'])->name('fixtures.redirect-to-date');
 Route::get('/jogos/{date}', [HomeController::class, 'byDate'])
     ->where('date', '\\d{4}-\\d{2}-\\d{2}')
@@ -51,5 +56,7 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::get('/campeonatos', [AdminCompetitionController::class, 'index'])->name('competitions.index');
     Route::put('/campeonatos/{competition}', [AdminCompetitionController::class, 'update'])->name('competitions.update');
     Route::get('/instalacoes-pwa', [AdminPwaInstallationController::class, 'index'])->name('pwa-installations.index');
+    Route::get('/notificacoes-push', [AdminPushNotificationController::class, 'index'])->name('push.index');
+    Route::post('/notificacoes-push', [AdminPushNotificationController::class, 'store'])->middleware('throttle:10,1')->name('push.store');
     Route::post('/sair', [AdminAuthController::class, 'destroy'])->name('logout');
 });

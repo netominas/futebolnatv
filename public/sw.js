@@ -1,4 +1,4 @@
-const CACHE_NAME = 'futebol-na-tv-v1';
+const CACHE_NAME = 'futebol-na-tv-v2';
 const OFFLINE_URL = '/offline.html';
 const STATIC_ASSETS = [
     OFFLINE_URL,
@@ -42,4 +42,40 @@ self.addEventListener('fetch', (event) => {
             }))
         );
     }
+});
+
+self.addEventListener('push', (event) => {
+    let payload = {};
+    try {
+        payload = event.data?.json() || {};
+    } catch (_) {
+        payload = { body: event.data?.text() || 'Confira as novidades do Futebol na TV.' };
+    }
+
+    const title = payload.title || 'Futebol na TV';
+    const options = {
+        body: payload.body || '',
+        icon: payload.icon || '/images/pwa/icon-192.png',
+        badge: payload.badge || '/images/pwa/icon-192.png',
+        image: payload.image,
+        data: payload.data || { url: '/' },
+        tag: payload.tag || 'futebol-na-tv',
+        lang: payload.lang || 'pt-BR',
+        vibrate: payload.vibrate || [180, 80, 180],
+        actions: payload.actions || [],
+    };
+
+    event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const destination = new URL(event.notification.data?.url || '/', self.location.origin).href;
+
+    event.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windows) => {
+        for (const client of windows) {
+            if (client.url === destination && 'focus' in client) return client.focus();
+        }
+        return clients.openWindow(destination);
+    }));
 });

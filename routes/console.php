@@ -21,3 +21,15 @@ if (config('services.wosti.sync_enabled')) {
         ->withoutOverlapping(30)
         ->onOneServer();
 }
+
+Schedule::command('push:fixture-reminders')
+    ->everyFiveMinutes()
+    ->timezone('America/Sao_Paulo')
+    ->withoutOverlapping(10)
+    ->onOneServer();
+
+Schedule::command('push:daily-summary')
+    ->dailyAt('09:00')
+    ->timezone('America/Sao_Paulo')
+    ->withoutOverlapping(30)
+    ->onOneServer();
