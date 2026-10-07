@@ -13,6 +13,8 @@ class FutebolWebPush extends Notification
         public readonly string $body,
         public readonly string $url,
         public readonly string $tag = 'futebol-na-tv',
+        public readonly ?string $iconUrl = null,
+        public readonly ?string $imageUrl = null,
     ) {}
 
     public function via(object $notifiable): array
@@ -22,10 +24,10 @@ class FutebolWebPush extends Notification
 
     public function toWebPush(object $notifiable, Notification $notification): WebPushMessage
     {
-        return (new WebPushMessage)
+        $message = (new WebPushMessage)
             ->title($this->title)
             ->body($this->body)
-            ->icon('/images/pwa/icon-192.png')
+            ->icon($this->iconUrl ?: asset('images/pwa/icon-192.png'))
             ->badge('/images/pwa/icon-192.png')
             ->lang('pt-BR')
             ->tag($this->tag)
@@ -33,5 +35,11 @@ class FutebolWebPush extends Notification
             ->action('Ver detalhes', 'open')
             ->data(['url' => $this->url])
             ->options(['TTL' => 3600, 'urgency' => 'normal']);
+
+        if ($this->imageUrl) {
+            $message->image($this->imageUrl);
+        }
+
+        return $message;
     }
 }

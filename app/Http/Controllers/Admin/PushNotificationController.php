@@ -38,12 +38,19 @@ class PushNotificationController extends Controller
             'body' => ['required', 'string', 'max:180'],
             'target_url' => ['nullable', 'string', 'max:1024'],
             'audience' => ['required', 'in:all,daily,reminders'],
+            'icon' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:1024', 'dimensions:min_width=72,min_height=72,max_width=1024,max_height=1024,ratio=1/1'],
+            'image' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:3072', 'dimensions:min_width=600,min_height=315,max_width=2400,max_height=1600'],
         ]);
 
         $url = $validated['target_url'] ?: route('home');
         if (! $this->isInternalUrl($url)) {
             return back()->withErrors(['target_url' => 'Use uma URL do Futebol na TV.'])->withInput();
         }
+
+        $iconPath = $request->file('icon')?->store('push/icons', 'public') ?: null;
+        $imagePath = $request->file('image')?->store('push/images', 'public') ?: null;
+        $iconUrl = $iconPath ? asset('storage/'.$iconPath) : null;
+        $imageUrl = $imagePath ? asset('storage/'.$imagePath) : null;
 
         $query = $sender->subscribedQuery();
         if ($validated['audience'] === 'daily') {
@@ -58,11 +65,20 @@ class PushNotificationController extends Controller
             'body' => $validated['body'],
             'target_url' => $url,
             'audience' => $validated['audience'],
+            'icon_path' => $iconPath,
+            'image_path' => $imagePath,
         ]);
 
         $result = $sender->send(
             $query->cursor(),
-            new FutebolWebPush($validated['title'], $validated['body'], $url, 'manual-'.$log->id),
+            new FutebolWebPush(
+                $validated['title'],
+                $validated['body'],
+                $url,
+                'manual-'.$log->id,
+                $iconUrl,
+                $imageUrl,
+            ),
         );
 
         $log->update([

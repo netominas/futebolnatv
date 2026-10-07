@@ -12,6 +12,8 @@ class PushNotificationLog extends Model
         'body',
         'target_url',
         'audience',
+        'icon_path',
+        'image_path',
         'status',
         'recipients_count',
         'failed_count',
@@ -22,5 +24,15 @@ class PushNotificationLog extends Model
     protected function casts(): array
     {
         return ['sent_at' => 'datetime'];
+    }
+
+    public function iconUrl(): ?string
+    {
+        return $this->icon_path ? asset('storage/'.$this->icon_path) : null;
+    }
+
+    public function imageUrl(): ?string
+    {
+        return $this->image_path ? asset('storage/'.$this->image_path) : null;
     }
 }

@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\PushNotificationLog;
 use App\Models\PushSubscriber;
 use App\Models\User;
 use App\Notifications\FutebolWebPush;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class WebPushTest extends TestCase
@@ -54,6 +57,7 @@ class WebPushTest extends TestCase
         $this->get(route('admin.push.index'))->assertRedirect(route('admin.login'));
 
         Notification::fake();
+        Storage::fake('public');
         $subscriber = PushSubscriber::create([
             'installation_key' => hash('sha256', self::INSTALLATION_ID),
             'platform' => 'android',
@@ -69,16 +73,27 @@ class WebPushTest extends TestCase
                 'body' => 'Confira as transmissões desta noite.',
                 'target_url' => '/jogos/2026-10-07',
                 'audience' => 'all',
+                'icon' => UploadedFile::fake()->image('icone.png', 192, 192),
+                'image' => UploadedFile::fake()->image('destaque.jpg', 1200, 630),
             ])
             ->assertRedirect();
 
-        Notification::assertSentTo($subscriber, FutebolWebPush::class);
+        Notification::assertSentTo(
+            $subscriber,
+            FutebolWebPush::class,
+            fn (FutebolWebPush $notification) => str_contains((string) $notification->iconUrl, '/storage/push/icons/')
+                && str_contains((string) $notification->imageUrl, '/storage/push/images/'),
+        );
         $this->assertDatabaseHas('push_notification_logs', [
             'type' => 'manual',
             'status' => 'sent',
             'recipients_count' => 1,
             'failed_count' => 0,
         ]);
+
+        $log = PushNotificationLog::firstOrFail();
+        Storage::disk('public')->assertExists($log->icon_path);
+        Storage::disk('public')->assertExists($log->image_path);
     }
 
     public function test_push_admin_rejects_an_external_target_url(): void
