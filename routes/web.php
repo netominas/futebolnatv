@@ -3,11 +3,13 @@
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\ChannelController as AdminChannelController;
 use App\Http\Controllers\Admin\CompetitionController as AdminCompetitionController;
+use App\Http\Controllers\Admin\PwaInstallationController as AdminPwaInstallationController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\FixtureController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PwaInstallationController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
@@ -32,6 +34,9 @@ Route::get('/politica-de-privacidade', [PageController::class, 'privacy'])->name
 Route::get('/politica-de-cookies', [PageController::class, 'cookies'])->name('pages.cookies');
 Route::get('/termos-de-uso', [PageController::class, 'terms'])->name('pages.terms');
 Route::get('/politica-editorial', [PageController::class, 'editorial'])->name('pages.editorial');
+Route::post('/pwa/instalacoes', [PwaInstallationController::class, 'store'])
+    ->middleware('throttle:30,1')
+    ->name('pwa-installations.store');
 Route::get('/jogos', [HomeController::class, 'redirectToDate'])->name('fixtures.redirect-to-date');
 Route::get('/jogos/{date}', [HomeController::class, 'byDate'])
     ->where('date', '\\d{4}-\\d{2}-\\d{2}')
@@ -45,5 +50,6 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::put('/canais/{channel}', [AdminChannelController::class, 'update'])->name('channels.update');
     Route::get('/campeonatos', [AdminCompetitionController::class, 'index'])->name('competitions.index');
     Route::put('/campeonatos/{competition}', [AdminCompetitionController::class, 'update'])->name('competitions.update');
+    Route::get('/instalacoes-pwa', [AdminPwaInstallationController::class, 'index'])->name('pwa-installations.index');
     Route::post('/sair', [AdminAuthController::class, 'destroy'])->name('logout');
 });
