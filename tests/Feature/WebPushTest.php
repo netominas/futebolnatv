@@ -73,8 +73,8 @@ class WebPushTest extends TestCase
                 'body' => 'Confira as transmissões desta noite.',
                 'target_url' => '/jogos/2026-10-07',
                 'audience' => 'all',
-                'icon' => UploadedFile::fake()->image('icone.png', 192, 192),
-                'image' => UploadedFile::fake()->image('destaque.jpg', 1200, 630),
+                'icon' => $this->fakePng('icone.png', 192, 192),
+                'image' => $this->fakePng('destaque.png', 1200, 630),
             ])
             ->assertRedirect();
 
@@ -126,5 +126,24 @@ class WebPushTest extends TestCase
             'daily_summary' => true,
             'kickoff_reminders' => true,
         ];
+    }
+
+    private function fakePng(string $name, int $width, int $height): UploadedFile
+    {
+        $row = "\0".str_repeat("\0", $width * 3);
+        $pixels = str_repeat($row, $height);
+        $compressed = gzcompress($pixels, 9);
+
+        $png = "\x89PNG\r\n\x1a\n"
+            .$this->pngChunk('IHDR', pack('NNC5', $width, $height, 8, 2, 0, 0, 0))
+            .$this->pngChunk('IDAT', $compressed === false ? '' : $compressed)
+            .$this->pngChunk('IEND', '');
+
+        return UploadedFile::fake()->createWithContent($name, $png);
+    }
+
+    private function pngChunk(string $type, string $data): string
+    {
+        return pack('N', strlen($data)).$type.$data.pack('N', crc32($type.$data));
     }
 }
