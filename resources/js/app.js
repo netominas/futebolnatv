@@ -233,6 +233,7 @@ pushEnable?.addEventListener('click', async () => {
         await savePushSubscription(subscription);
         setPushUi(true);
         pushStatus.textContent = 'Alertas ativados com sucesso.';
+        pushDialog?.close();
     } catch (_) {
         pushStatus.textContent = 'Não foi possível ativar os alertas neste dispositivo.';
     } finally {
