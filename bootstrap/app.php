@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\CachePublicResponse;
+use App\Http\Middleware\EnsureSameOrigin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo(fn () => route('admin.login'));
         $middleware->redirectUsersTo(fn () => route('admin.competitions.index'));
+        $middleware->alias([
+            'public-cache' => CachePublicResponse::class,
+            'same-origin' => EnsureSameOrigin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

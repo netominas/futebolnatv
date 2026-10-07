@@ -33,5 +33,7 @@ class ProgressiveWebAppTest extends TestCase
         $this->assertFileExists(public_path('images/pwa/icon-192.png'));
         $this->assertFileExists(public_path('images/pwa/icon-512.png'));
         $this->assertFileExists(public_path('images/pwa/icon-maskable-512.png'));
+        $this->assertStringContainsString('futebol-na-tv-v3', file_get_contents(public_path('sw.js')));
+        $this->assertStringContainsString("'/admin'", file_get_contents(public_path('sw.js')));
     }
 }

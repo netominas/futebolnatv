@@ -16,21 +16,42 @@ class PwaInstallationController extends Controller
         ]);
 
         [$platform, $deviceType] = $this->deviceDetails((string) $request->userAgent());
-        $installation = PwaInstallation::firstOrNew([
-            'installation_key' => hash('sha256', $validated['installation_id']),
-        ]);
-
-        $installation->platform = $platform;
-        $installation->device_type = $deviceType;
+        $installationKey = hash('sha256', $validated['installation_id']);
+        $timestamp = now();
 
         if ($validated['event'] === 'installed') {
-            $installation->status = 'installed';
-            $installation->installed_at ??= now();
-        } elseif (! $installation->exists || $installation->status !== 'installed') {
-            $installation->status = 'interest';
-        }
+            PwaInstallation::upsert([[
+                'installation_key' => $installationKey,
+                'platform' => $platform,
+                'device_type' => $deviceType,
+                'status' => 'installed',
+                'installed_at' => $timestamp,
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ]], ['installation_key'], ['platform', 'device_type', 'status', 'updated_at']);
 
-        $installation->save();
+            PwaInstallation::where('installation_key', $installationKey)
+                ->whereNull('installed_at')
+                ->update(['installed_at' => $timestamp]);
+        } else {
+            PwaInstallation::insertOrIgnore([
+                'installation_key' => $installationKey,
+                'platform' => $platform,
+                'device_type' => $deviceType,
+                'status' => 'interest',
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ]);
+
+            PwaInstallation::where('installation_key', $installationKey)
+                ->where('status', '!=', 'installed')
+                ->update([
+                    'platform' => $platform,
+                    'device_type' => $deviceType,
+                    'status' => 'interest',
+                    'updated_at' => $timestamp,
+                ]);
+        }
 
         return response()->json(['recorded' => true]);
     }

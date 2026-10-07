@@ -24,7 +24,7 @@ class WebPushTest extends TestCase
     {
         $payload = $this->subscriptionPayload();
 
-        $this->postJson(route('push.store'), $payload)
+        $this->withHeader('Origin', config('app.url'))->postJson(route('push.store'), $payload)
             ->assertOk()
             ->assertJson(['subscribed' => true]);
 
@@ -35,7 +35,8 @@ class WebPushTest extends TestCase
         ]);
         $this->assertDatabaseHas('push_subscriptions', ['endpoint' => self::ENDPOINT]);
 
-        $this->postJson(route('push.status'), ['installation_id' => self::INSTALLATION_ID])
+        $this->withHeader('Origin', config('app.url'))
+            ->postJson(route('push.status'), ['installation_id' => self::INSTALLATION_ID])
             ->assertOk()
             ->assertJson([
                 'subscribed' => true,
@@ -43,12 +44,22 @@ class WebPushTest extends TestCase
                 'kickoff_reminders' => true,
             ]);
 
-        $this->deleteJson(route('push.destroy'), [
-            'installation_id' => self::INSTALLATION_ID,
-            'endpoint' => self::ENDPOINT,
-        ])->assertOk()->assertJson(['subscribed' => false]);
+        $this->withHeader('Origin', config('app.url'))
+            ->deleteJson(route('push.destroy'), [
+                'installation_id' => self::INSTALLATION_ID,
+                'endpoint' => self::ENDPOINT,
+            ])->assertOk()->assertJson(['subscribed' => false]);
 
         $this->assertDatabaseMissing('push_subscriptions', ['endpoint' => self::ENDPOINT]);
+        $this->assertDatabaseCount('push_subscribers', 0);
+    }
+
+    public function test_a_cross_origin_request_cannot_read_push_status(): void
+    {
+        $this->withHeader('Origin', 'https://example.com')
+            ->postJson(route('push.status'), ['installation_id' => self::INSTALLATION_ID])
+            ->assertForbidden();
+
         $this->assertDatabaseCount('push_subscribers', 0);
     }
 

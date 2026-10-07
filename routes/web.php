@@ -15,37 +15,54 @@ use App\Http\Controllers\WebPushSubscriptionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-Route::get('/', HomeController::class)->name('home');
+$statelessMiddleware = [StartSession::class, ShareErrorsFromSession::class, PreventRequestForgery::class];
+
+Route::middleware('public-cache')->withoutMiddleware($statelessMiddleware)->group(function () {
+    Route::get('/', HomeController::class)->name('home');
+    Route::get('/jogos-de-amanha', [HomeController::class, 'tomorrow'])->name('fixtures.tomorrow');
+    Route::get('/jogo/{slug}-{fixture}', FixtureController::class)
+        ->where(['slug' => '[a-z0-9-]+', 'fixture' => '[0-9]+'])
+        ->name('fixtures.show');
+    Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+    Route::get('/times', [TeamController::class, 'index'])->name('teams.index');
+    Route::get('/time/{team:slug}', [TeamController::class, 'show'])->name('teams.show');
+    Route::get('/canais', [ChannelController::class, 'index'])->name('channels.index');
+    Route::get('/canal/{channel:slug}', [ChannelController::class, 'show'])->name('channels.show');
+    Route::get('/campeonatos', [CompetitionController::class, 'index'])->name('competitions.index');
+    Route::get('/campeonato/{competition:slug}', [CompetitionController::class, 'show'])->name('competitions.show');
+    Route::get('/sobre', [PageController::class, 'about'])->name('pages.about');
+    Route::get('/contato', [PageController::class, 'contact'])->name('pages.contact');
+    Route::get('/politica-de-privacidade', [PageController::class, 'privacy'])->name('pages.privacy');
+    Route::get('/politica-de-cookies', [PageController::class, 'cookies'])->name('pages.cookies');
+    Route::get('/termos-de-uso', [PageController::class, 'terms'])->name('pages.terms');
+    Route::get('/politica-editorial', [PageController::class, 'editorial'])->name('pages.editorial');
+    Route::get('/jogos/{date}', [HomeController::class, 'byDate'])
+        ->where('date', '\\d{4}-\\d{2}-\\d{2}')
+        ->name('fixtures.by-date');
+});
+
 Route::get('/buscar', SearchController::class)->name('search');
-Route::get('/jogos-de-amanha', [HomeController::class, 'tomorrow'])->name('fixtures.tomorrow');
-Route::get('/jogo/{slug}-{fixture}', FixtureController::class)
-    ->where(['slug' => '[a-z0-9-]+', 'fixture' => '[0-9]+'])
-    ->name('fixtures.show');
-Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
-Route::get('/times', [TeamController::class, 'index'])->name('teams.index');
-Route::get('/time/{team:slug}', [TeamController::class, 'show'])->name('teams.show');
-Route::get('/canais', [ChannelController::class, 'index'])->name('channels.index');
-Route::get('/canal/{channel:slug}', [ChannelController::class, 'show'])->name('channels.show');
-Route::get('/campeonatos', [CompetitionController::class, 'index'])->name('competitions.index');
-Route::get('/campeonato/{competition:slug}', [CompetitionController::class, 'show'])->name('competitions.show');
-Route::get('/sobre', [PageController::class, 'about'])->name('pages.about');
-Route::get('/contato', [PageController::class, 'contact'])->name('pages.contact');
-Route::get('/politica-de-privacidade', [PageController::class, 'privacy'])->name('pages.privacy');
-Route::get('/politica-de-cookies', [PageController::class, 'cookies'])->name('pages.cookies');
-Route::get('/termos-de-uso', [PageController::class, 'terms'])->name('pages.terms');
-Route::get('/politica-editorial', [PageController::class, 'editorial'])->name('pages.editorial');
-Route::post('/pwa/instalacoes', [PwaInstallationController::class, 'store'])
-    ->middleware('throttle:30,1')
-    ->name('pwa-installations.store');
-Route::post('/push/assinar', [WebPushSubscriptionController::class, 'store'])->middleware('throttle:20,1')->name('push.store');
-Route::post('/push/status', [WebPushSubscriptionController::class, 'status'])->middleware('throttle:30,1')->name('push.status');
-Route::delete('/push/assinar', [WebPushSubscriptionController::class, 'destroy'])->middleware('throttle:20,1')->name('push.destroy');
 Route::get('/jogos', [HomeController::class, 'redirectToDate'])->name('fixtures.redirect-to-date');
-Route::get('/jogos/{date}', [HomeController::class, 'byDate'])
-    ->where('date', '\\d{4}-\\d{2}-\\d{2}')
-    ->name('fixtures.by-date');
+
+Route::middleware('same-origin')->withoutMiddleware($statelessMiddleware)->group(function () {
+    Route::post('/pwa/instalacoes', [PwaInstallationController::class, 'store'])
+        ->middleware('throttle:30,1')
+        ->name('pwa-installations.store');
+    Route::post('/push/assinar', [WebPushSubscriptionController::class, 'store'])
+        ->middleware('throttle:20,1')
+        ->name('push.store');
+    Route::post('/push/status', [WebPushSubscriptionController::class, 'status'])
+        ->middleware('throttle:30,1')
+        ->name('push.status');
+    Route::delete('/push/assinar', [WebPushSubscriptionController::class, 'destroy'])
+        ->middleware('throttle:20,1')
+        ->name('push.destroy');
+});
 Route::middleware('guest')->group(function () {
     Route::get('/admin/login', [AdminAuthController::class, 'create'])->name('admin.login');
     Route::post('/admin/login', [AdminAuthController::class, 'store'])->middleware('throttle:5,1')->name('admin.login.store');

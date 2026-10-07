@@ -42,9 +42,6 @@ const installationId = () => {
 };
 
 const recordInstallation = (event) => {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-    if (!csrfToken) return;
-
     fetch('/pwa/instalacoes', {
         method: 'POST',
         credentials: 'same-origin',
@@ -52,7 +49,6 @@ const recordInstallation = (event) => {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken,
         },
         body: JSON.stringify({ installation_id: installationId(), event }),
     }).catch(() => {});
@@ -111,7 +107,7 @@ if (isIos) showInstallButtons();
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=2', { scope: '/', updateViaCache: 'none' });
+        navigator.serviceWorker.register('/sw.js?v=3', { scope: '/', updateViaCache: 'none' });
     });
 }
 
@@ -128,7 +124,6 @@ const pushSupported = 'serviceWorker' in navigator && 'PushManager' in window &&
 const pushHeaders = () => ({
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
 });
 
 const applicationServerKey = (value) => {

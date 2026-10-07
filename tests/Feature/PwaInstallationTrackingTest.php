@@ -14,7 +14,10 @@ class PwaInstallationTrackingTest extends TestCase
     public function test_it_records_each_confirmed_installation_only_once(): void
     {
         $payload = ['installation_id' => 'device-123', 'event' => 'installed'];
-        $headers = ['User-Agent' => 'Mozilla/5.0 (Linux; Android 14; Mobile) Chrome/130'];
+        $headers = [
+            'Origin' => config('app.url'),
+            'User-Agent' => 'Mozilla/5.0 (Linux; Android 14; Mobile) Chrome/130',
+        ];
 
         $this->withHeaders($headers)->postJson(route('pwa-installations.store'), $payload)->assertOk();
         $this->withHeaders($headers)->postJson(route('pwa-installations.store'), $payload)->assertOk();
@@ -30,12 +33,44 @@ class PwaInstallationTrackingTest extends TestCase
 
     public function test_interest_is_not_counted_as_a_confirmed_installation(): void
     {
-        $this->withHeaders(['User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)'])
+        $this->withHeaders([
+            'Origin' => config('app.url'),
+            'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)',
+        ])
             ->postJson(route('pwa-installations.store'), ['installation_id' => 'iphone-123', 'event' => 'interest'])
             ->assertOk();
 
         $this->assertSame(0, PwaInstallation::installed()->count());
         $this->assertDatabaseHas('pwa_installations', ['status' => 'interest', 'platform' => 'ios']);
+    }
+
+    public function test_a_cross_origin_request_cannot_record_an_installation(): void
+    {
+        $this->withHeader('Origin', 'https://example.com')
+            ->postJson(route('pwa-installations.store'), [
+                'installation_id' => 'cross-origin-device',
+                'event' => 'installed',
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseCount('pwa_installations', 0);
+    }
+
+    public function test_installation_timestamp_is_set_when_interest_becomes_an_installation(): void
+    {
+        $headers = ['Origin' => config('app.url')];
+        $payload = ['installation_id' => 'interested-device', 'event' => 'interest'];
+
+        $this->withHeaders($headers)->postJson(route('pwa-installations.store'), $payload)->assertOk();
+        $this->withHeaders($headers)->postJson(route('pwa-installations.store'), [
+            'installation_id' => 'interested-device',
+            'event' => 'installed',
+        ])->assertOk();
+
+        $installation = PwaInstallation::firstOrFail();
+
+        $this->assertSame('installed', $installation->status);
+        $this->assertNotNull($installation->installed_at);
     }
 
     public function test_installation_dashboard_requires_authentication_and_shows_metrics(): void
