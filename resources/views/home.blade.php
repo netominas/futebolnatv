@@ -4,7 +4,7 @@
 <link rel="canonical" href="{{ $canonicalUrl }}">
 <meta property="og:type" content="website"><meta property="og:title" content="{{ $pageTitle }}"><meta property="og:description" content="{{ $metaDescription }}"><meta property="og:url" content="{{ $canonicalUrl }}">
 <meta name="twitter:title" content="{{ $pageTitle }}"><meta name="twitter:description" content="{{ $metaDescription }}">
-<title>{{ $pageTitle }}</title><script type="application/ld+json">{!! json_encode(['@context'=>'https://schema.org','@type'=>'WebSite','name'=>'Futebol na TV','url'=>route('home'),'description'=>'Guia de jogos de futebol na TV e no streaming no Brasil.'], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>@include('partials.social-image-meta')@vite(['resources/css/app.css','resources/js/app.js'])</head>
+<title>{{ $pageTitle }}</title><script type="application/ld+json">{!! json_encode(['@context'=>'https://schema.org','@type'=>'WebSite','name'=>'Futebol na TV','url'=>route('home'),'description'=>'Guia de jogos de futebol na TV e no streaming no Brasil.'], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>@include('partials.social-image-meta')@include('partials.pwa-head')@vite(['resources/css/app.css','resources/js/app.js'])</head>
 <body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">@include('partials.google-tag-body')
 @include('partials.site-header')
 <main><section class="hero-panel border-b border-blue-100"><div class="mx-auto max-w-6xl px-4 pb-8 pt-7 sm:px-6 sm:pb-16 sm:pt-11"><div class="max-w-3xl">

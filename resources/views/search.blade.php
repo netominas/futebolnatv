@@ -7,6 +7,7 @@
     <title>{{ $canSearch ? 'Busca por '.$query : 'Buscar' }} | Futebol na TV</title>
     <meta name="description" content="Encontre times, campeonatos e canais com jogos de futebol transmitidos na TV e no streaming.">
     <meta name="robots" content="noindex,follow">
+    @include('partials.pwa-head')
     @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">@include('partials.google-tag-body')

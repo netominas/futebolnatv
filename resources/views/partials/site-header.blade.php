@@ -21,6 +21,7 @@
             <a href="{{ route('teams.index') }}" class="rounded-xl px-2 py-2 hover:bg-white/10 sm:px-3">Times</a>
             <a href="{{ route('channels.index') }}" class="rounded-xl px-2 py-2 hover:bg-white/10 sm:px-3">Canais</a>
             <a href="{{ route('competitions.index') }}" class="rounded-xl px-2 py-2 hover:bg-white/10 sm:px-3">Campeonatos</a>
+            <button type="button" data-pwa-install class="hidden rounded-xl border border-white/25 bg-white/15 px-3 py-2 hover:bg-white/25">Instalar app</button>
         </nav>
     </div>
 </header>

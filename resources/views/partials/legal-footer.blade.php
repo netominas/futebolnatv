@@ -6,6 +6,7 @@
                 <span>Futebol na TV</span>
             </a>
             <p class="mt-3 max-w-md text-sm leading-6 text-slate-500">Guia independente de jogos televisionados e plataformas de streaming no Brasil. Horários e transmissões podem mudar sem aviso prévio.</p>
+            <button type="button" data-pwa-install class="mt-4 hidden rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm hover:bg-blue-700">Instalar Futebol na TV</button>
         </div>
         <nav class="grid grid-cols-2 gap-x-7 gap-y-2 text-sm font-bold text-slate-600"><a class="hover:text-blue-700" href="{{ route('pages.about') }}">Sobre</a><a class="hover:text-blue-700" href="{{ route('pages.contact') }}">Contato</a><a class="hover:text-blue-700" href="{{ route('pages.privacy') }}">Privacidade</a><a class="hover:text-blue-700" href="{{ route('pages.cookies') }}">Cookies</a><a class="hover:text-blue-700" href="{{ route('pages.terms') }}">Termos de Uso</a><a class="hover:text-blue-700" href="{{ route('pages.editorial') }}">Política Editorial</a></nav>
     </div>

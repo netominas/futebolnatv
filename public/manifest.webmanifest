@@ -1,0 +1,49 @@
+{
+    "id": "/",
+    "name": "Futebol na TV",
+    "short_name": "Futebol TV",
+    "description": "Jogos de futebol na TV e no streaming: horários e onde assistir no Brasil.",
+    "lang": "pt-BR",
+    "dir": "ltr",
+    "start_url": "/?source=pwa",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#f4f7fb",
+    "theme_color": "#0756b9",
+    "categories": ["sports", "news", "entertainment"],
+    "icons": [
+        {
+            "src": "/images/pwa/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/images/pwa/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/images/pwa/icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Jogos de hoje",
+            "short_name": "Hoje",
+            "url": "/?source=pwa-shortcut",
+            "icons": [{ "src": "/images/pwa/icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Jogos de amanhã",
+            "short_name": "Amanhã",
+            "url": "/jogos-de-amanha?source=pwa-shortcut",
+            "icons": [{ "src": "/images/pwa/icon-192.png", "sizes": "192x192" }]
+        }
+    ]
+}
