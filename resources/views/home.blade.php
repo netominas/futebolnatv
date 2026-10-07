@@ -2,6 +2,8 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0756b9">
 <meta name="description" content="{{ $metaDescription }}">
 <link rel="canonical" href="{{ $canonicalUrl }}">
+<meta property="og:type" content="website"><meta property="og:title" content="{{ $pageTitle }}"><meta property="og:description" content="{{ $metaDescription }}"><meta property="og:url" content="{{ $canonicalUrl }}">
+<meta name="twitter:title" content="{{ $pageTitle }}"><meta name="twitter:description" content="{{ $metaDescription }}">
 <title>{{ $pageTitle }}</title><script type="application/ld+json">{!! json_encode(['@context'=>'https://schema.org','@type'=>'WebSite','name'=>'Futebol na TV','url'=>route('home'),'description'=>'Guia de jogos de futebol na TV e no streaming no Brasil.'], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>@include('partials.social-image-meta')@vite(['resources/css/app.css','resources/js/app.js'])</head>
 <body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">@include('partials.google-tag-body')
 @include('partials.site-header')
