@@ -38,8 +38,15 @@ class PushNotificationController extends Controller
             'body' => ['required', 'string', 'max:180'],
             'target_url' => ['nullable', 'string', 'max:1024'],
             'audience' => ['required', 'in:all,daily,reminders'],
-            'icon' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:1024', 'dimensions:min_width=72,min_height=72,max_width=1024,max_height=1024,ratio=1/1'],
-            'image' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:3072', 'dimensions:min_width=600,min_height=315,max_width=2400,max_height=1600'],
+            'icon' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
+            'image' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:3072'],
+        ], [
+            'icon.image' => 'O ícone precisa ser um arquivo de imagem válido.',
+            'icon.mimes' => 'O ícone deve estar em PNG, JPG ou WebP.',
+            'icon.max' => 'O ícone deve ter no máximo 1 MB.',
+            'image.image' => 'A imagem de destaque precisa ser um arquivo de imagem válido.',
+            'image.mimes' => 'A imagem de destaque deve estar em PNG, JPG ou WebP.',
+            'image.max' => 'A imagem de destaque deve ter no máximo 3 MB.',
         ]);
 
         $url = $validated['target_url'] ?: route('home');

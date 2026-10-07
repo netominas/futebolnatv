@@ -73,8 +73,8 @@ class WebPushTest extends TestCase
                 'body' => 'Confira as transmissões desta noite.',
                 'target_url' => '/jogos/2026-10-07',
                 'audience' => 'all',
-                'icon' => $this->fakePng('icone.png', 192, 192),
-                'image' => $this->fakePng('destaque.png', 1200, 630),
+                'icon' => $this->fakePng('icone.png', 200, 100),
+                'image' => $this->fakePng('destaque.png', 400, 200),
             ])
             ->assertRedirect();
 
