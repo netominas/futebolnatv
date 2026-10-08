@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\SendPushNotification;
 use App\Models\Fixture;
 use App\Models\PushNotificationLog;
-use App\Models\PushSubscriber;
-use App\Notifications\FutebolWebPush;
-use App\Services\WebPushSender;
 use Illuminate\Console\Command;
 
 class SendDailyPushSummary extends Command
@@ -15,7 +13,7 @@ class SendDailyPushSummary extends Command
 
     protected $description = 'Envia o resumo diário de jogos na TV';
 
-    public function handle(WebPushSender $sender): int
+    public function handle(): int
     {
         if (! config('webpush.vapid.public_key') || ! config('webpush.vapid.private_key')) {
             $this->warn('Web Push não configurado.');
@@ -57,23 +55,9 @@ class SendDailyPushSummary extends Command
             'dedupe_key' => $dedupeKey,
         ]);
 
-        $subscribers = PushSubscriber::subscribed()
-            ->where('daily_summary', true)
-            ->with('pushSubscriptions')
-            ->cursor();
-        $result = $sender->send(
-            $subscribers,
-            new FutebolWebPush($title, $highlights, route('home'), $dedupeKey),
-        );
+        SendPushNotification::dispatch($log->id);
 
-        $log->update([
-            'status' => 'sent',
-            'recipients_count' => $result['sent'],
-            'failed_count' => $result['failed'],
-            'sent_at' => now(),
-        ]);
-
-        $this->info("Resumo enviado para {$result['sent']} dispositivo(s).");
+        $this->info('Resumo diário adicionado à fila de envio.');
 
         return self::SUCCESS;
     }

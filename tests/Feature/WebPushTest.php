@@ -2,13 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\SendPushNotification;
 use App\Models\PushNotificationLog;
 use App\Models\PushSubscriber;
 use App\Models\User;
 use App\Notifications\FutebolWebPush;
+use App\Services\WebPushSender;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -63,20 +66,19 @@ class WebPushTest extends TestCase
         $this->assertDatabaseCount('push_subscribers', 0);
     }
 
-    public function test_push_admin_is_protected_and_can_send_an_internal_notification(): void
+    public function test_push_admin_is_protected_and_can_queue_an_internal_notification(): void
     {
         $this->get(route('admin.push.index'))->assertRedirect(route('admin.login'));
 
-        Notification::fake();
+        Queue::fake();
         Storage::fake('public');
-        $subscriber = PushSubscriber::create([
+        PushSubscriber::create([
             'installation_key' => hash('sha256', self::INSTALLATION_ID),
             'platform' => 'android',
             'device_type' => 'mobile',
             'daily_summary' => true,
             'kickoff_reminders' => false,
         ]);
-        $subscriber->updatePushSubscription(self::ENDPOINT, 'public-key', 'auth-token', 'aes128gcm');
 
         $this->actingAs(User::factory()->create())
             ->post(route('admin.push.store'), [
@@ -87,24 +89,75 @@ class WebPushTest extends TestCase
                 'icon' => $this->fakePng('icone.png', 200, 100),
                 'image' => $this->fakePng('destaque.png', 400, 200),
             ])
-            ->assertRedirect();
+            ->assertRedirect()
+            ->assertSessionHas('status', 'Notificação adicionada à fila de envio.');
 
-        Notification::assertSentTo(
-            $subscriber,
-            FutebolWebPush::class,
-            fn (FutebolWebPush $notification) => str_contains((string) $notification->iconUrl, '/storage/push/icons/')
-                && str_contains((string) $notification->imageUrl, '/storage/push/images/'),
-        );
         $this->assertDatabaseHas('push_notification_logs', [
             'type' => 'manual',
-            'status' => 'sent',
-            'recipients_count' => 1,
+            'status' => 'pending',
+            'recipients_count' => 0,
             'failed_count' => 0,
         ]);
 
         $log = PushNotificationLog::firstOrFail();
+        Queue::assertPushedOn(
+            'push',
+            SendPushNotification::class,
+            fn (SendPushNotification $job) => $job->notificationLogId === $log->id
+                && $job->connection === 'redis_push',
+        );
         Storage::disk('public')->assertExists($log->icon_path);
         Storage::disk('public')->assertExists($log->image_path);
+    }
+
+    public function test_queued_push_job_sends_and_finishes_the_campaign(): void
+    {
+        Notification::fake();
+        $subscriber = PushSubscriber::create([
+            'installation_key' => hash('sha256', self::INSTALLATION_ID),
+            'platform' => 'android',
+            'device_type' => 'mobile',
+            'daily_summary' => true,
+            'kickoff_reminders' => false,
+        ]);
+        $subscriber->updatePushSubscription(self::ENDPOINT, 'public-key', 'auth-token', 'aes128gcm');
+        $log = PushNotificationLog::create([
+            'type' => 'manual',
+            'title' => 'Jogos de hoje',
+            'body' => 'Confira as transmissões desta noite.',
+            'target_url' => '/jogos/2026-10-07',
+            'audience' => 'all',
+        ]);
+
+        (new SendPushNotification($log->id))->handle(app(WebPushSender::class));
+
+        Notification::assertSentTo($subscriber, FutebolWebPush::class);
+        $this->assertDatabaseHas('push_notification_logs', [
+            'id' => $log->id,
+            'status' => 'sent',
+            'recipients_count' => 1,
+            'failed_count' => 0,
+        ]);
+        $this->assertNotNull($log->fresh()->sent_at);
+        $this->assertNotNull($subscriber->fresh()->last_notified_at);
+    }
+
+    public function test_a_permanently_failed_push_job_marks_the_campaign_as_failed(): void
+    {
+        $log = PushNotificationLog::create([
+            'type' => 'manual',
+            'title' => 'Jogos de hoje',
+            'body' => 'Confira as transmissões desta noite.',
+            'target_url' => '/',
+            'audience' => 'all',
+        ]);
+
+        (new SendPushNotification($log->id))->failed(new \RuntimeException('Falha simulada'));
+
+        $this->assertDatabaseHas('push_notification_logs', [
+            'id' => $log->id,
+            'status' => 'failed',
+        ]);
     }
 
     public function test_push_admin_rejects_an_external_target_url(): void

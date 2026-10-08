@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\SendPushNotification;
 use App\Models\Fixture;
 use App\Models\PushNotificationLog;
-use App\Models\PushSubscriber;
-use App\Notifications\FutebolWebPush;
-use App\Services\WebPushSender;
 use Illuminate\Console\Command;
 
 class SendFixturePushReminders extends Command
@@ -15,7 +13,7 @@ class SendFixturePushReminders extends Command
 
     protected $description = 'Envia lembretes dos jogos prioritários que começam em cerca de 30 minutos';
 
-    public function handle(WebPushSender $sender): int
+    public function handle(): int
     {
         if (! config('webpush.vapid.public_key') || ! config('webpush.vapid.private_key')) {
             $this->warn('Web Push não configurado.');
@@ -48,21 +46,7 @@ class SendFixturePushReminders extends Command
                 'dedupe_key' => $dedupeKey,
             ]);
 
-            $subscribers = PushSubscriber::subscribed()
-                ->where('kickoff_reminders', true)
-                ->with('pushSubscriptions')
-                ->cursor();
-            $result = $sender->send(
-                $subscribers,
-                new FutebolWebPush($title, $body, $fixture->publicUrl(), $dedupeKey),
-            );
-
-            $log->update([
-                'status' => 'sent',
-                'recipients_count' => $result['sent'],
-                'failed_count' => $result['failed'],
-                'sent_at' => now(),
-            ]);
+            SendPushNotification::dispatch($log->id);
         }
 
         $this->info("{$fixtures->count()} partida(s) processada(s).");

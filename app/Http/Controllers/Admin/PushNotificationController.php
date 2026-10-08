@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendPushNotification;
 use App\Models\PushNotificationLog;
 use App\Models\PushSubscriber;
-use App\Notifications\FutebolWebPush;
-use App\Services\WebPushSender;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,7 +30,7 @@ class PushNotificationController extends Controller
         return view('admin.push.index', compact('metrics', 'platforms', 'logs'));
     }
 
-    public function store(Request $request, WebPushSender $sender): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:80'],
@@ -56,16 +55,6 @@ class PushNotificationController extends Controller
 
         $iconPath = $request->file('icon')?->store('push/icons', 'public') ?: null;
         $imagePath = $request->file('image')?->store('push/images', 'public') ?: null;
-        $iconUrl = $iconPath ? asset('storage/'.$iconPath) : null;
-        $imageUrl = $imagePath ? asset('storage/'.$imagePath) : null;
-
-        $query = $sender->subscribedQuery();
-        if ($validated['audience'] === 'daily') {
-            $query->where('daily_summary', true);
-        } elseif ($validated['audience'] === 'reminders') {
-            $query->where('kickoff_reminders', true);
-        }
-
         $log = PushNotificationLog::create([
             'type' => 'manual',
             'title' => $validated['title'],
@@ -76,26 +65,9 @@ class PushNotificationController extends Controller
             'image_path' => $imagePath,
         ]);
 
-        $result = $sender->send(
-            $query->cursor(),
-            new FutebolWebPush(
-                $validated['title'],
-                $validated['body'],
-                $url,
-                'manual-'.$log->id,
-                $iconUrl,
-                $imageUrl,
-            ),
-        );
+        SendPushNotification::dispatch($log->id);
 
-        $log->update([
-            'status' => 'sent',
-            'recipients_count' => $result['sent'],
-            'failed_count' => $result['failed'],
-            'sent_at' => now(),
-        ]);
-
-        return back()->with('status', "Notificação enviada para {$result['sent']} dispositivo(s).");
+        return back()->with('status', 'Notificação adicionada à fila de envio.');
     }
 
     private function isInternalUrl(string $url): bool

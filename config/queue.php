@@ -73,6 +73,15 @@ return [
             'after_commit' => false,
         ],
 
+        'redis_push' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_PUSH_CONNECTION', 'default'),
+            'queue' => 'push',
+            'retry_after' => (int) env('REDIS_PUSH_RETRY_AFTER', 240),
+            'block_for' => 5,
+            'after_commit' => false,
+        ],
+
         'deferred' => [
             'driver' => 'deferred',
         ],
