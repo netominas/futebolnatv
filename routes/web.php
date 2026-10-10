@@ -9,6 +9,7 @@ use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\FixtureController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LiveFixtureController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PwaInstallationController;
 use App\Http\Controllers\WebPushSubscriptionController;
@@ -24,6 +25,7 @@ $statelessMiddleware = [StartSession::class, ShareErrorsFromSession::class, Prev
 
 Route::middleware('public-cache')->withoutMiddleware($statelessMiddleware)->group(function () {
     Route::get('/', HomeController::class)->name('home');
+    Route::get('/jogos-ao-vivo', LiveFixtureController::class)->name('fixtures.live');
     Route::get('/jogos-de-amanha', [HomeController::class, 'tomorrow'])->name('fixtures.tomorrow');
     Route::get('/jogo/{slug}-{fixture}', FixtureController::class)
         ->where(['slug' => '[a-z0-9-]+', 'fixture' => '[0-9]+'])

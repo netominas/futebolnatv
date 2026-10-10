@@ -18,9 +18,10 @@
         </form>
         <nav class="flex w-full items-center justify-between text-xs font-extrabold lg:w-auto lg:justify-start lg:gap-1 lg:text-sm">
             <a href="{{ route('home') }}" class="rounded-xl px-2 py-2 hover:bg-white/10 sm:px-3">Jogos</a>
+            <a href="{{ route('fixtures.live') }}" class="inline-flex items-center gap-1.5 rounded-xl px-2 py-2 hover:bg-white/10 sm:px-3"><span class="h-2 w-2 rounded-full bg-red-400 ring-2 ring-red-300/30"></span>Ao vivo</a>
             <a href="{{ route('teams.index') }}" class="rounded-xl px-2 py-2 hover:bg-white/10 sm:px-3">Times</a>
             <a href="{{ route('channels.index') }}" class="rounded-xl px-2 py-2 hover:bg-white/10 sm:px-3">Canais</a>
-            <a href="{{ route('competitions.index') }}" class="rounded-xl px-2 py-2 hover:bg-white/10 sm:px-3">Campeonatos</a>
+            <a href="{{ route('competitions.index') }}" class="rounded-xl px-2 py-2 hover:bg-white/10 sm:px-3"><span class="sm:hidden">Ligas</span><span class="hidden sm:inline">Campeonatos</span></a>
             <button type="button" data-pwa-install class="hidden rounded-xl border border-white/25 bg-white/15 px-3 py-2 hover:bg-white/25">Instalar app</button>
         </nav>
     </div>
