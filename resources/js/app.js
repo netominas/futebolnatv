@@ -18,6 +18,7 @@ let installPrompt = null;
 const installButtons = document.querySelectorAll('[data-pwa-install]');
 const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+const pwaConversionStorageKey = 'futebol-tv-pwa-install-conversion-sent';
 
 const installationId = () => {
     const storageKey = 'futebol-tv-installation-id';
@@ -54,6 +55,44 @@ const recordInstallation = (event) => {
     }).catch(() => {});
 };
 
+const pwaPlatform = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+
+    if (/iphone|ipad|ipod/.test(userAgent)) return 'ios';
+    if (userAgent.includes('android')) return 'android';
+    if (userAgent.includes('windows')) return 'windows';
+    if (userAgent.includes('macintosh')) return 'macos';
+    if (userAgent.includes('linux')) return 'linux';
+
+    return 'other';
+};
+
+const trackPwaInstallation = (method) => {
+    const installId = installationId();
+
+    try {
+        if (window.localStorage.getItem(pwaConversionStorageKey) === installId) return false;
+    } catch (_) {
+        // Continue without persistent deduplication when storage is unavailable.
+    }
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        event: 'pwa_install',
+        pwa_install_id: installId,
+        pwa_platform: pwaPlatform(),
+        pwa_install_method: method,
+    });
+
+    try {
+        window.localStorage.setItem(pwaConversionStorageKey, installId);
+    } catch (_) {
+        // The event was still emitted even if the browser blocks local storage.
+    }
+
+    return true;
+};
+
 const showInstallButtons = () => {
     if (!isStandalone) {
         installButtons.forEach((button) => {
@@ -75,10 +114,7 @@ installButtons.forEach((button) => {
     button.addEventListener('click', async () => {
         if (installPrompt) {
             installPrompt.prompt();
-            const choice = await installPrompt.userChoice;
-            if (choice.outcome === 'accepted') {
-                recordInstallation('installed');
-            }
+            await installPrompt.userChoice;
             installPrompt = null;
             installButtons.forEach((item) => {
                 item.classList.add('hidden');
@@ -96,12 +132,19 @@ installButtons.forEach((button) => {
 
 window.addEventListener('appinstalled', () => {
     recordInstallation('installed');
+    trackPwaInstallation('appinstalled');
     installPrompt = null;
     installButtons.forEach((button) => {
         button.classList.add('hidden');
         button.classList.remove('flex');
     });
 });
+
+if (isStandalone) {
+    if (trackPwaInstallation(isIos ? 'ios_standalone' : 'standalone')) {
+        recordInstallation('installed');
+    }
+}
 
 if (isIos) showInstallButtons();
 

@@ -36,4 +36,16 @@ class ProgressiveWebAppTest extends TestCase
         $this->assertStringContainsString('futebol-na-tv-v3', file_get_contents(public_path('sw.js')));
         $this->assertStringContainsString("'/admin'", file_get_contents(public_path('sw.js')));
     }
+
+    public function test_pwa_script_emits_the_confirmed_installation_event_for_tag_manager(): void
+    {
+        $script = file_get_contents(resource_path('js/app.js'));
+
+        $this->assertStringContainsString("window.addEventListener('appinstalled'", $script);
+        $this->assertStringContainsString("event: 'pwa_install'", $script);
+        $this->assertStringContainsString('pwa_install_id: installId', $script);
+        $this->assertStringContainsString('pwa_platform: pwaPlatform()', $script);
+        $this->assertStringContainsString("trackPwaInstallation('appinstalled')", $script);
+        $this->assertStringContainsString('pwa-install-conversion-sent', $script);
+    }
 }
