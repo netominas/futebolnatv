@@ -19,10 +19,12 @@ class NewsroomTest extends TestCase
     {
         $user = User::factory()->create(['name' => 'Redação Futebol na TV', 'bio' => 'Equipe responsável pelos levantamentos editoriais.']);
         $competition = Competition::create(['wosti_id' => 1, 'name' => 'Copa do Brasil', 'slug' => 'copa-do-brasil', 'display_priority' => 10]);
+        $lateCompetition = Competition::create(['wosti_id' => 2, 'name' => 'Champions League', 'slug' => 'champions-league', 'display_priority' => 1]);
         $channel = BroadcastChannel::create(['wosti_id' => 1, 'name' => 'Premiere', 'slug' => 'premiere']);
 
         $this->fixture($competition, $channel, 1, 'Time Azul', 'Time Branco', 18);
         $this->fixture($competition, $channel, 2, 'Time Verde', 'Time Amarelo', 21);
+        $this->fixture($lateCompetition, $channel, 3, 'Time Preto', 'Time Vermelho', 23);
 
         $this->get(route('admin.news.index'))->assertRedirect(route('admin.login'));
 
@@ -33,10 +35,14 @@ class NewsroomTest extends TestCase
         $article = NewsArticle::firstOrFail();
         $response->assertRedirect(route('admin.news.edit', $article));
         $this->assertSame('draft', $article->status);
-        $this->assertStringContainsString('Premiere concentra 2 dos 2 jogos', $article->title);
+        $this->assertStringContainsString('Premiere concentra 3 dos 3 jogos', $article->title);
+        $this->assertStringContainsString(today()->format('d/m'), $article->title);
+        $this->assertStringContainsString('Os horários vão de **18:00** a **23:00**', $article->body);
         $this->assertStringNotContainsString('Horários com partidas simultâneas', $article->body);
-        $this->assertSame(2, $article->source_snapshot['fixture_count']);
-        $this->assertCount(2, $article->fixtures);
+        $this->assertSame('18:00', $article->source_snapshot['first_kickoff']);
+        $this->assertSame('23:00', $article->source_snapshot['last_kickoff']);
+        $this->assertSame(3, $article->source_snapshot['fixture_count']);
+        $this->assertCount(3, $article->fixtures);
         $this->get($article->publicUrl())->assertNotFound();
     }
 

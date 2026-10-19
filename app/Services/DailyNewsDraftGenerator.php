@@ -44,11 +44,14 @@ class DailyNewsDraftGenerator
         $topCompetitionId = $competitionCounts->keys()->first();
         $topCompetition = $topCompetitionId ? $competitions->get($topCompetitionId) : null;
         $timeGroups = $fixtures->groupBy(fn (Fixture $fixture) => $fixture->starts_at->format('H:i'));
+        $chronologicalFixtures = $fixtures
+            ->sortBy(fn (Fixture $fixture) => $fixture->starts_at->getTimestamp())
+            ->values();
         $busiestTime = $timeGroups->sortByDesc->count()->first();
         $busiestTimeLabel = $timeGroups->sortByDesc->count()->keys()->first();
         $dayLabel = $date->locale('pt_BR')->translatedFormat('l');
         $dateLabel = $date->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y');
-        $title = $this->title($fixtures->count(), $dayLabel, $topChannel?->name, $topChannelCount, $topCompetition?->name);
+        $title = $this->title($fixtures->count(), $dayLabel, $date->format('d/m'), $topChannel?->name, $topChannelCount, $topCompetition?->name);
         $lastChecked = $fixtures->max('last_seen_at') ?? now();
 
         $snapshot = [
@@ -59,8 +62,8 @@ class DailyNewsDraftGenerator
             'top_channel' => $topChannel ? ['id' => $topChannel->id, 'name' => $topChannel->name, 'count' => $topChannelCount] : null,
             'top_competition' => $topCompetition ? ['id' => $topCompetition->id, 'name' => $topCompetition->name, 'count' => (int) $competitionCounts->get($topCompetitionId)] : null,
             'busiest_time' => $busiestTimeLabel ? ['time' => $busiestTimeLabel, 'count' => $busiestTime?->count() ?? 0] : null,
-            'first_kickoff' => $fixtures->first()->starts_at->format('H:i'),
-            'last_kickoff' => $fixtures->last()->starts_at->format('H:i'),
+            'first_kickoff' => $chronologicalFixtures->first()->starts_at->format('H:i'),
+            'last_kickoff' => $chronologicalFixtures->last()->starts_at->format('H:i'),
             'generated_at' => now()->toIso8601String(),
         ];
 
@@ -115,17 +118,17 @@ class DailyNewsDraftGenerator
             ->get();
     }
 
-    private function title(int $fixtures, string $day, ?string $channel, int $channelCount, ?string $competition): string
+    private function title(int $fixtures, string $day, string $date, ?string $channel, int $channelCount, ?string $competition): string
     {
         if ($channel && $channelCount >= 2) {
-            return "{$channel} concentra {$channelCount} dos {$fixtures} jogos na TV desta {$day}";
+            return "{$channel} concentra {$channelCount} dos {$fixtures} jogos na TV desta {$day} ({$date})";
         }
 
         if ($competition) {
-            return "{$competition} é destaque entre os {$fixtures} jogos na TV desta {$day}";
+            return "{$competition} é destaque entre os {$fixtures} jogos na TV desta {$day} ({$date})";
         }
 
-        return "Jogos na TV desta {$day}: horários, canais e destaques da programação";
+        return "Jogos na TV desta {$day} ({$date}): horários, canais e destaques";
     }
 
     private function excerpt(int $fixtures, int $competitions, int $channels, ?string $topChannel, int $topChannelCount): string
@@ -146,6 +149,9 @@ class DailyNewsDraftGenerator
      */
     private function body(CarbonImmutable $date, Collection $fixtures, Collection $featured, Collection $channelCounts, Collection $channels, Collection $timeGroups, mixed $lastChecked): string
     {
+        $chronologicalFixtures = $fixtures
+            ->sortBy(fn (Fixture $fixture) => $fixture->starts_at->getTimestamp())
+            ->values();
         $dateLabel = $date->locale('pt_BR')->translatedFormat('l, d \d\e F');
         $competitionCount = $fixtures->pluck('competition_id')->unique()->count();
         $channelCount = $channels->count();
@@ -154,7 +160,7 @@ class DailyNewsDraftGenerator
         $topChannelCount = $topChannelId ? (int) $channelCounts->get($topChannelId) : 0;
 
         $paragraphs = [
-            "A grade desta {$dateLabel} tem **{$fixtures->count()} jogos com transmissão confirmada para o Brasil**, distribuídos por {$competitionCount} campeonatos e {$channelCount} canais ou plataformas. Os horários vão de **{$fixtures->first()->starts_at->format('H:i')}** a **{$fixtures->last()->starts_at->format('H:i')}**, sempre no horário de Brasília.",
+            "A grade desta {$dateLabel} tem **{$fixtures->count()} jogos com transmissão confirmada para o Brasil**, distribuídos por {$competitionCount} campeonatos e {$channelCount} canais ou plataformas. Os horários vão de **{$chronologicalFixtures->first()->starts_at->format('H:i')}** a **{$chronologicalFixtures->last()->starts_at->format('H:i')}**, sempre no horário de Brasília.",
         ];
 
         if ($topChannel && $topChannelCount >= 2) {
