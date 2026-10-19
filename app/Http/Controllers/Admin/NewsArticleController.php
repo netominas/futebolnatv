@@ -135,8 +135,18 @@ class NewsArticleController extends Controller
             if (! $request->hasFile('hero_image') && ! $article?->hero_image_path) {
                 throw ValidationException::withMessages(['hero_image' => 'Adicione uma imagem editorial antes de publicar ou agendar.']);
             }
-            if (blank($validated['hero_image_alt'])) {
-                throw ValidationException::withMessages(['hero_image_alt' => 'Descreva a imagem para acessibilidade e SEO.']);
+            $imageMetadataErrors = [];
+            if (blank($validated['hero_image_alt'] ?? null)) {
+                $imageMetadataErrors['hero_image_alt'] = 'Descreva a imagem para acessibilidade e SEO.';
+            }
+            if (blank($validated['hero_image_caption'] ?? null)) {
+                $imageMetadataErrors['hero_image_caption'] = 'Adicione uma legenda contextual para a imagem.';
+            }
+            if (blank($validated['hero_image_credit'] ?? null)) {
+                $imageMetadataErrors['hero_image_credit'] = 'Informe o crédito ou a origem da imagem.';
+            }
+            if ($imageMetadataErrors !== []) {
+                throw ValidationException::withMessages($imageMetadataErrors);
             }
         }
 

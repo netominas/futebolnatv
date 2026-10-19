@@ -108,6 +108,39 @@ class NewsroomTest extends TestCase
         $this->assertSame('draft', $article->fresh()->status);
     }
 
+    public function test_article_cannot_be_published_without_complete_image_metadata(): void
+    {
+        $author = User::factory()->create(['bio' => 'Autor responsável pela revisão da programação.']);
+        $article = NewsArticle::create([
+            'type' => 'daily_schedule',
+            'status' => 'draft',
+            'coverage_date' => today(),
+            'title' => 'Guia dos jogos na televisão',
+            'slug' => 'guia-dos-jogos-na-televisao',
+            'excerpt' => 'Resumo dos jogos e canais da programação de hoje.',
+            'body' => str_repeat('Informação verificada sobre jogos, canais e horários. ', 8),
+            'hero_image_path' => 'news/guia.jpg',
+            'hero_image_alt' => 'Televisão exibindo uma partida de futebol',
+            'created_by' => $author->id,
+        ]);
+
+        $this->actingAs($author)->put(route('admin.news.update', $article), [
+            'type' => 'daily_schedule',
+            'status' => 'published',
+            'coverage_date' => today()->format('Y-m-d'),
+            'title' => $article->title,
+            'slug' => $article->slug,
+            'excerpt' => $article->excerpt,
+            'body' => $article->body,
+            'hero_image_alt' => $article->hero_image_alt,
+            'created_by' => $author->id,
+            'author_name' => $author->name,
+            'author_bio' => $author->bio,
+        ])->assertSessionHasErrors(['hero_image_caption', 'hero_image_credit']);
+
+        $this->assertSame('draft', $article->fresh()->status);
+    }
+
     private function fixture(Competition $competition, BroadcastChannel $channel, int $id, string $homeName, string $awayName, int $hour): void
     {
         $home = Team::create(['wosti_id' => $id * 10, 'name' => $homeName, 'slug' => str($homeName)->slug()]);
