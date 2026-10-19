@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fixture;
+use App\Models\NewsArticle;
 use App\Services\FeaturedFixtures;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
@@ -64,6 +65,13 @@ class HomeController extends Controller
             'selectedDate' => $selectedDate,
             'isToday' => $isToday,
             'isTomorrow' => $isTomorrow,
+            'latestNews' => NewsArticle::query()
+                ->published()
+                ->with('author:id,name,slug')
+                ->latest('published_at')
+                ->latest('scheduled_for')
+                ->limit(3)
+                ->get(),
             'metaDescription' => match (true) {
                 $isToday => 'Futebol na TV hoje: veja os jogos ao vivo, horários e onde assistir cada partida na televisão e no streaming no Brasil.',
                 $isTomorrow => 'Jogos de amanhã na TV: confira partidas, horários e onde assistir futebol ao vivo na televisão e no streaming no Brasil.',

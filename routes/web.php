@@ -3,19 +3,22 @@
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\ChannelController as AdminChannelController;
 use App\Http\Controllers\Admin\CompetitionController as AdminCompetitionController;
-use App\Http\Controllers\Admin\PwaInstallationController as AdminPwaInstallationController;
+use App\Http\Controllers\Admin\NewsArticleController as AdminNewsArticleController;
 use App\Http\Controllers\Admin\PushNotificationController as AdminPushNotificationController;
+use App\Http\Controllers\Admin\PwaInstallationController as AdminPwaInstallationController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\FixtureController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LiveFixtureController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\NewsSitemapController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PwaInstallationController;
-use App\Http\Controllers\WebPushSubscriptionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\WebPushSubscriptionController;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +34,14 @@ Route::middleware('public-cache')->withoutMiddleware($statelessMiddleware)->grou
         ->where(['slug' => '[a-z0-9-]+', 'fixture' => '[0-9]+'])
         ->name('fixtures.show');
     Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+    Route::get('/sitemap-noticias.xml', NewsSitemapController::class)->name('news.sitemap');
+    Route::get('/noticias', [NewsController::class, 'index'])->name('news.index');
+    Route::get('/noticias/{article}', [NewsController::class, 'show'])
+        ->where('article', '[a-z0-9-]+')
+        ->name('news.show');
+    Route::get('/autor/{author}', [NewsController::class, 'author'])
+        ->where('author', '[a-z0-9-]+')
+        ->name('news.authors.show');
     Route::get('/times', [TeamController::class, 'index'])->name('teams.index');
     Route::get('/time/{team:slug}', [TeamController::class, 'show'])->name('teams.show');
     Route::get('/canais', [ChannelController::class, 'index'])->name('channels.index');
@@ -77,5 +88,11 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::get('/instalacoes-pwa', [AdminPwaInstallationController::class, 'index'])->name('pwa-installations.index');
     Route::get('/notificacoes-push', [AdminPushNotificationController::class, 'index'])->name('push.index');
     Route::post('/notificacoes-push', [AdminPushNotificationController::class, 'store'])->middleware('throttle:10,1')->name('push.store');
+    Route::get('/noticias', [AdminNewsArticleController::class, 'index'])->name('news.index');
+    Route::get('/noticias/nova', [AdminNewsArticleController::class, 'create'])->name('news.create');
+    Route::post('/noticias', [AdminNewsArticleController::class, 'store'])->name('news.store');
+    Route::post('/noticias/gerar-resumo-diario', [AdminNewsArticleController::class, 'generate'])->name('news.generate');
+    Route::get('/noticias/{article}/editar', [AdminNewsArticleController::class, 'edit'])->name('news.edit');
+    Route::put('/noticias/{article}', [AdminNewsArticleController::class, 'update'])->name('news.update');
     Route::post('/sair', [AdminAuthController::class, 'destroy'])->name('logout');
 });

@@ -3,6 +3,13 @@
     <url><loc>{{ route('home') }}</loc><changefreq>hourly</changefreq><priority>1.0</priority></url>
     <url><loc>{{ route('fixtures.live') }}</loc><changefreq>always</changefreq><priority>0.9</priority></url>
     <url><loc>{{ route('fixtures.tomorrow') }}</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>
+    <url><loc>{{ route('news.index') }}</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+@foreach($newsArticles as $article)
+    <url><loc>{{ $article->publicUrl() }}</loc><lastmod>{{ $article->updated_at->toAtomString() }}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+@endforeach
+@foreach($newsArticles->pluck('author')->filter()->unique('id') as $author)
+    <url><loc>{{ $author->publicUrl() }}</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+@endforeach
 @foreach(['pages.about','pages.contact','pages.privacy','pages.cookies','pages.terms','pages.editorial'] as $pageRoute)
     <url><loc>{{ route($pageRoute) }}</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
 @endforeach

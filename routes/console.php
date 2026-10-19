@@ -33,3 +33,9 @@ Schedule::command('push:daily-summary')
     ->timezone('America/Sao_Paulo')
     ->withoutOverlapping(30)
     ->onOneServer();
+
+Schedule::command('news:generate-daily-draft')
+    ->dailyAt('06:00')
+    ->timezone('America/Sao_Paulo')
+    ->withoutOverlapping(30)
+    ->onOneServer();

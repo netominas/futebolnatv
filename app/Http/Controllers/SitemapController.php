@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BroadcastChannel;
 use App\Models\Competition;
 use App\Models\Fixture;
+use App\Models\NewsArticle;
 use App\Models\Team;
 use Illuminate\Http\Response;
 
@@ -35,8 +36,14 @@ class SitemapController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'slug', 'updated_at']);
 
+        $newsArticles = NewsArticle::query()
+            ->published()
+            ->with('author:id,name,slug')
+            ->latest('published_at')
+            ->get(['id', 'created_by', 'slug', 'updated_at']);
+
         return response()
-            ->view('sitemap', compact('channels', 'competitions', 'fixtures', 'teams'))
+            ->view('sitemap', compact('channels', 'competitions', 'fixtures', 'newsArticles', 'teams'))
             ->header('Content-Type', 'application/xml; charset=UTF-8')
             ->header('Cache-Control', 'public, max-age=3600');
     }
