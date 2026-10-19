@@ -66,6 +66,11 @@ class NewsroomTest extends TestCase
         ]);
 
         $this->get(route('news.index'))->assertOk()->assertSee($article->title);
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('Últimas notícias')
+            ->assertSee($article->title)
+            ->assertSee($article->heroImageUrl(), false);
         $this->get($article->publicUrl())
             ->assertOk()
             ->assertSee($article->title)

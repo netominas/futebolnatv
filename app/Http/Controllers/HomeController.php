@@ -70,7 +70,7 @@ class HomeController extends Controller
                 ->with('author:id,name,slug')
                 ->latest('published_at')
                 ->latest('scheduled_for')
-                ->limit(3)
+                ->limit(4)
                 ->get(),
             'metaDescription' => match (true) {
                 $isToday => 'Futebol na TV hoje: veja os jogos ao vivo, horários e onde assistir cada partida na televisão e no streaming no Brasil.',
