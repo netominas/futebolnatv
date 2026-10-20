@@ -11,6 +11,7 @@
 - Toda notícia deve receber uma imagem editorial própria antes de ser publicada ou agendada. O padrão é 16:9, preferencialmente 1600 × 900 px (mínimo 1200 × 675 px), arquivo otimizado com até 5 MB, sem marcas ou elementos enganosos.
 - Cada imagem de notícia deve ser armazenada no disco público e ter texto alternativo descritivo, legenda contextual e crédito/origem. Confirmar que a URL pública da imagem responde antes da publicação.
 - Rascunhos automáticos de notícias nunca são publicados sem revisão humana do texto, dos fatos e da imagem.
+- Títulos de notícias consecutivas não devem repetir a mesma fórmula. Escolher o ângulo editorial mais relevante entre campeonato dominante, partida ou times em destaque, concentração de horários e distribuição por canal; usar nomes de jogadores somente após confirmação em fonte atual e deixar claro quando a escalação não estiver confirmada.
 
 # Laravel Application
 

@@ -51,13 +51,25 @@ class DailyNewsDraftGenerator
         $busiestTimeLabel = $timeGroups->sortByDesc->count()->keys()->first();
         $dayLabel = $date->locale('pt_BR')->translatedFormat('l');
         $dateLabel = $date->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y');
-        $title = $this->title($fixtures->count(), $dayLabel, $date->format('d/m'), $topChannel?->name, $topChannelCount, $topCompetition?->name);
+        [$title, $titleAngle] = $this->title(
+            $date,
+            $fixtures->count(),
+            $dayLabel,
+            $topChannel?->name,
+            $topChannelCount,
+            $topCompetition?->name,
+            $topCompetitionId ? (int) $competitionCounts->get($topCompetitionId) : 0,
+            $featured->first(),
+            $busiestTimeLabel,
+            $busiestTime?->count() ?? 0,
+        );
         $lastChecked = $fixtures->max('last_seen_at') ?? now();
 
         $snapshot = [
             'coverage_date' => $date->format('Y-m-d'),
             'fixture_count' => $fixtures->count(),
             'competition_count' => $competitions->count(),
+            'title_angle' => $titleAngle,
             'channel_count' => $channels->count(),
             'top_channel' => $topChannel ? ['id' => $topChannel->id, 'name' => $topChannel->name, 'count' => $topChannelCount] : null,
             'top_competition' => $topCompetition ? ['id' => $topCompetition->id, 'name' => $topCompetition->name, 'count' => (int) $competitionCounts->get($topCompetitionId)] : null,
@@ -118,17 +130,55 @@ class DailyNewsDraftGenerator
             ->get();
     }
 
-    private function title(int $fixtures, string $day, string $date, ?string $channel, int $channelCount, ?string $competition): string
+    /** @return array{0: string, 1: string} */
+    private function title(
+        CarbonImmutable $coverageDate,
+        int $fixtures,
+        string $day,
+        ?string $channel,
+        int $channelCount,
+        ?string $competition,
+        int $competitionCount,
+        ?Fixture $featuredFixture,
+        ?string $busiestTime,
+        int $busiestTimeCount,
+    ): array
     {
+        $date = $coverageDate->format('d/m');
+        $candidates = collect();
+
+        if ($competition && $competitionCount >= 3) {
+            $candidates->put('competition', "{$competition} lidera a {$day} ({$date}) com {$competitionCount} jogos na TV");
+        }
+
+        if ($featuredFixture) {
+            $candidates->put('match', "{$featuredFixture->homeTeam->name} x {$featuredFixture->awayTeam->name} puxa os destaques de {$fixtures} jogos na TV nesta {$day} ({$date})");
+        }
+
+        if ($busiestTime && $busiestTimeCount >= 3) {
+            $candidates->put('time_slot', "Rodada cheia às {$busiestTime}: veja os {$fixtures} jogos na TV desta {$day} ({$date})");
+        }
+
         if ($channel && $channelCount >= 2) {
-            return "{$channel} concentra {$channelCount} dos {$fixtures} jogos na TV desta {$day} ({$date})";
+            $candidates->put('channel', "{$channel} exibe {$channelCount} dos {$fixtures} jogos na TV desta {$day} ({$date})");
         }
 
-        if ($competition) {
-            return "{$competition} é destaque entre os {$fixtures} jogos na TV desta {$day} ({$date})";
+        $candidates->put('overview', "Jogos na TV desta {$day} ({$date}): horários, canais e destaques");
+
+        $previous = NewsArticle::query()
+            ->where('type', 'daily_schedule')
+            ->whereDate('coverage_date', '<', $coverageDate)
+            ->latest('coverage_date')
+            ->first();
+        $previousAngle = data_get($previous?->source_snapshot, 'title_angle');
+        if (! $previousAngle && $previous && data_get($previous->source_snapshot, 'top_channel.name') && str_starts_with($previous->title, data_get($previous->source_snapshot, 'top_channel.name'))) {
+            $previousAngle = 'channel';
         }
 
-        return "Jogos na TV desta {$day} ({$date}): horários, canais e destaques";
+        $selected = $candidates->first(fn (string $title, string $angle) => $angle !== $previousAngle);
+        $angle = $candidates->search($selected, strict: true);
+
+        return [$selected, is_string($angle) ? $angle : 'overview'];
     }
 
     private function excerpt(int $fixtures, int $competitions, int $channels, ?string $topChannel, int $topChannelCount): string

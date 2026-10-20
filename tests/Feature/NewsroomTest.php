@@ -35,8 +35,9 @@ class NewsroomTest extends TestCase
         $article = NewsArticle::firstOrFail();
         $response->assertRedirect(route('admin.news.edit', $article));
         $this->assertSame('draft', $article->status);
-        $this->assertStringContainsString('Premiere concentra 3 dos 3 jogos', $article->title);
+        $this->assertStringContainsString('3 jogos na TV', $article->title);
         $this->assertStringContainsString(today()->format('d/m'), $article->title);
+        $this->assertNotEmpty($article->source_snapshot['title_angle']);
         $this->assertStringContainsString('Os horários vão de **18:00** a **23:00**', $article->body);
         $this->assertSame(3, substr_count($article->body, 'Transmissão informada:'));
         $this->assertStringNotContainsString('Horários com partidas simultâneas', $article->body);

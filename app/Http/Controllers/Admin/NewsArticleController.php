@@ -105,7 +105,7 @@ class NewsArticleController extends Controller
     private function validateArticle(Request $request, ?NewsArticle $article = null): array
     {
         $validated = $request->validate([
-            'type' => ['required', Rule::in(['daily_schedule', 'channel_focus', 'competition_focus', 'time_slot', 'weekend_guide'])],
+            'type' => ['required', Rule::in(['daily_schedule', 'match_focus', 'channel_focus', 'competition_focus', 'time_slot', 'weekend_guide'])],
             'status' => ['required', Rule::in(['draft', 'scheduled', 'published'])],
             'coverage_date' => ['nullable', 'date_format:Y-m-d'],
             'title' => ['required', 'string', 'max:160'],
