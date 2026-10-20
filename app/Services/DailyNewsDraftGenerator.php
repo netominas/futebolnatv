@@ -33,10 +33,10 @@ class DailyNewsDraftGenerator
         $competitionCounts = $fixtures->countBy('competition_id')->sortDesc();
         $competitions = $fixtures->pluck('competition')->unique('id')->keyBy('id');
         $featured = $this->featuredFixtures->select($fixtures);
-
-        if ($featured->isEmpty()) {
-            $featured = $fixtures->take(4);
-        }
+        $featured = $featured
+            ->concat($fixtures->reject(fn (Fixture $fixture) => $featured->contains('id', $fixture->id)))
+            ->take(4)
+            ->values();
 
         $topChannelId = $channelCounts->keys()->first();
         $topChannel = $topChannelId ? $channels->get($topChannelId) : null;
