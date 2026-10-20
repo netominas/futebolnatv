@@ -38,6 +38,8 @@ class NewsroomTest extends TestCase
         $this->assertStringContainsString('3 jogos na TV', $article->title);
         $this->assertStringContainsString(today()->format('d/m'), $article->title);
         $this->assertNotEmpty($article->source_snapshot['title_angle']);
+        $this->assertLessThanOrEqual(60, mb_strlen($article->meta_title));
+        $this->assertFalse(str_ends_with($article->meta_title, ' na'));
         $this->assertStringContainsString('Os horários vão de **18:00** a **23:00**', $article->body);
         $this->assertSame(3, substr_count($article->body, 'Transmissão informada:'));
         $this->assertStringNotContainsString('Horários com partidas simultâneas', $article->body);

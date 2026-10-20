@@ -99,7 +99,19 @@ class DailyNewsDraftGenerator
             'subtitle' => "A programação de {$dateLabel} reúne {$fixtures->count()} partidas em {$competitions->count()} campeonatos, com horários e canais confirmados para o Brasil.",
             'excerpt' => $this->excerpt($fixtures->count(), $competitions->count(), $channels->count(), $topChannel?->name, $topChannelCount),
             'body' => $this->body($date, $fixtures, $featured, $channelCounts, $channels, $timeGroups, $lastChecked),
-            'meta_title' => Str::limit($title, 60, ''),
+            'meta_title' => $this->metaTitle(
+                $title,
+                $titleAngle,
+                $date,
+                $dayLabel,
+                $fixtures->count(),
+                $topChannel?->name,
+                $topChannelCount,
+                $topCompetition?->name,
+                $topCompetitionId ? (int) $competitionCounts->get($topCompetitionId) : 0,
+                $featured->first(),
+                $busiestTimeLabel,
+            ),
             'meta_description' => Str::limit($this->excerpt($fixtures->count(), $competitions->count(), $channels->count(), $topChannel?->name, $topChannelCount), 155, ''),
             'source_snapshot' => $snapshot,
             'created_by' => $article?->created_by ?? $author->id,
@@ -188,6 +200,45 @@ class DailyNewsDraftGenerator
         return $topChannel && $topChannelCount >= 2
             ? $lead." {$topChannel} aparece em {$topChannelCount} transmissões."
             : $lead;
+    }
+
+    private function wordSafeLimit(string $value, int $limit): string
+    {
+        if (mb_strlen($value) <= $limit) {
+            return $value;
+        }
+
+        $truncated = mb_substr($value, 0, $limit + 1);
+        $lastSpace = mb_strrpos($truncated, ' ');
+
+        return rtrim($lastSpace === false ? mb_substr($value, 0, $limit) : mb_substr($truncated, 0, $lastSpace), " \t\n\r\0\x0B,;:-");
+    }
+
+    private function metaTitle(
+        string $title,
+        string $angle,
+        CarbonImmutable $date,
+        string $day,
+        int $fixtures,
+        ?string $channel,
+        int $channelCount,
+        ?string $competition,
+        int $competitionCount,
+        ?Fixture $featuredFixture,
+        ?string $busiestTime,
+    ): string {
+        $dateLabel = $date->format('d/m');
+        $candidate = match ($angle) {
+            'competition' => "{$competition}: {$competitionCount} jogos na TV nesta {$day} ({$dateLabel})",
+            'match' => $featuredFixture
+                ? "{$featuredFixture->homeTeam->name} x {$featuredFixture->awayTeam->name}: {$fixtures} jogos na TV ({$dateLabel})"
+                : $title,
+            'time_slot' => "Jogos na TV às {$busiestTime}: programação de {$dateLabel}",
+            'channel' => "{$channel}: {$channelCount} dos {$fixtures} jogos na TV em {$dateLabel}",
+            default => $title,
+        };
+
+        return $this->wordSafeLimit($candidate, 60);
     }
 
     /**
