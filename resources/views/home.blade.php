@@ -7,12 +7,11 @@
 <title>{{ $pageTitle }}</title><script type="application/ld+json">{!! json_encode(['@context'=>'https://schema.org','@type'=>'WebSite','name'=>'Futebol na TV','url'=>route('home'),'description'=>'Guia de jogos de futebol na TV e no streaming no Brasil.'], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>@include('partials.social-image-meta')@include('partials.pwa-head')@vite(['resources/css/app.css','resources/js/app.js'])</head>
 <body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">@include('partials.google-tag-body')
 @include('partials.site-header')
-<main><section class="hero-panel border-b border-blue-100"><div class="mx-auto max-w-6xl px-4 pb-8 pt-7 sm:px-6 sm:pb-16 sm:pt-11"><div class="max-w-3xl">
-<p class="mb-4 inline-flex rounded-full border border-blue-200 bg-white/80 px-3 py-1.5 text-xs font-extrabold uppercase tracking-widest text-blue-700">Programação por data</p>
+<main><section class="hero-panel border-b border-blue-100"><div class="mx-auto max-w-6xl px-4 pb-6 pt-5 sm:px-6 sm:pb-16 sm:pt-11"><div class="max-w-3xl">
 <h1 class="text-4xl font-black tracking-[-.045em] sm:text-5xl">{{ $pageHeading }}</h1>
-<p class="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">Todos os jogos com transmissão confirmada para o Brasil, organizados por campeonato e canal.</p>
+<p class="mt-3 max-w-2xl text-base leading-7 text-slate-600 sm:mt-4 sm:text-lg">Todos os jogos com transmissão confirmada para o Brasil, organizados por campeonato e canal.</p>
 </div></div></section>
-<div class="mx-auto max-w-6xl px-4 pb-14 pt-6 sm:px-6 sm:pt-0">
+<div class="mx-auto max-w-6xl px-4 pb-14 pt-5 sm:px-6 sm:pt-0">
 <nav class="date-nav -mt-7 mb-9 hidden gap-3 rounded-2xl border border-white bg-white p-3 shadow-xl shadow-slate-900/[.07] sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:p-4" aria-label="Navegação por data">
 <a class="date-link sm:justify-start" href="{{ $previousDateUrl }}">‹ <span>Dia anterior</span></a>
 <form method="get" action="{{ route('fixtures.redirect-to-date') }}" class="date-form flex min-w-0 items-center gap-2 rounded-xl bg-slate-50 p-1.5 ring-1 ring-slate-200"><label for="data" class="sr-only">Escolher data</label><span class="pl-2 text-blue-600">▣</span><input id="data" name="data" type="date" value="{{ $selectedDate->format('Y-m-d') }}" class="min-w-0 flex-1 bg-transparent px-1 py-2 text-sm font-bold outline-none sm:w-36"><button class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-extrabold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700">Ver</button></form>

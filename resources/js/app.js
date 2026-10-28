@@ -1,6 +1,41 @@
 const calendar = document.querySelector('#mobile-calendar');
+const mobileMenuContainer = document.querySelector('[data-mobile-menu-container]');
+const mobileMenuButton = document.querySelector('[data-mobile-menu-toggle]');
+const mobileMenu = document.querySelector('[data-mobile-menu]');
+
+const setMobileMenuOpen = (open) => {
+    if (!mobileMenu || !mobileMenuButton) return;
+
+    mobileMenu.classList.toggle('hidden', !open);
+    mobileMenuButton.setAttribute('aria-expanded', String(open));
+    mobileMenuButton.setAttribute('aria-label', open ? 'Fechar menu principal' : 'Abrir menu principal');
+    mobileMenuButton.querySelector('[data-mobile-menu-open-icon]')?.classList.toggle('hidden', open);
+    mobileMenuButton.querySelector('[data-mobile-menu-close-icon]')?.classList.toggle('hidden', !open);
+};
+
+mobileMenuButton?.addEventListener('click', () => {
+    setMobileMenuOpen(mobileMenuButton.getAttribute('aria-expanded') !== 'true');
+});
+
+mobileMenu?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => setMobileMenuOpen(false));
+});
+
+document.addEventListener('click', (event) => {
+    if (mobileMenuButton?.getAttribute('aria-expanded') === 'true' && !mobileMenuContainer?.contains(event.target)) {
+        setMobileMenuOpen(false);
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && mobileMenuButton?.getAttribute('aria-expanded') === 'true') {
+        setMobileMenuOpen(false);
+        mobileMenuButton.focus();
+    }
+});
 
 document.querySelector('[data-calendar-open]')?.addEventListener('click', () => {
+    setMobileMenuOpen(false);
     calendar?.showModal();
 });
 

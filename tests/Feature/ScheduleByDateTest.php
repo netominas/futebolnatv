@@ -35,7 +35,11 @@ class ScheduleByDateTest extends TestCase
             ->assertDontSee($today->homeTeam->publicUrl(), false)
             ->assertDontSee($today->channels->first()->publicUrl(), false)
             ->assertSee('data-calendar-open', false)
+            ->assertSee('data-mobile-menu-toggle', false)
+            ->assertSee('id="mobile-site-menu"', false)
+            ->assertSee('Menu principal mobile')
             ->assertSee('id="mobile-calendar"', false)
+            ->assertDontSee('Programação por data')
             ->assertSeeInOrder(['Jogo de Hoje', 'Próxima programação'])
             ->assertViewHas('fixturesByCompetition', fn ($groups): bool => $groups->count() === 1
                 && $groups->first()->count() === 2);
