@@ -41,7 +41,7 @@ class LiveFixturesTest extends TestCase
             ->assertDontSee('Partida Sem Canal')
             ->assertSee('<link rel="canonical" href="'.route('fixtures.live').'">', false)
             ->assertHeader('X-Futebol-Cache', 'public')
-            ->assertHeader('Cloudflare-CDN-Cache-Control', 'public, max-age=30, stale-if-error=300')
+            ->assertHeader('Cloudflare-CDN-Cache-Control', 'public, max-age=10, must-revalidate, stale-if-error=60')
             ->assertViewHas('fixtures', fn ($fixtures): bool => $fixtures->count() === 1 && $fixtures->first()->is($live));
 
         $this->get(route('home'))->assertSee(route('fixtures.live'));

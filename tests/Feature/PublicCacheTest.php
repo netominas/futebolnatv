@@ -17,11 +17,20 @@ class PublicCacheTest extends TestCase
         $response->assertHeader('X-Futebol-Cache', 'public');
         $response->assertHeader(
             'Cloudflare-CDN-Cache-Control',
-            'public, max-age=60, stale-while-revalidate=300, stale-if-error=86400',
+            'public, max-age=30, must-revalidate, stale-if-error=300',
         );
-        $this->assertStringContainsString('public', (string) $response->headers->get('Cache-Control'));
+        $this->assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
         $this->assertFalse($response->headers->has('Set-Cookie'));
         $response->assertDontSee('name="csrf-token"', false);
+    }
+
+    public function test_static_content_pages_keep_the_longer_edge_cache_without_browser_html_cache(): void
+    {
+        $response = $this->get(route('pages.about'));
+
+        $response->assertOk()
+            ->assertHeader('Cloudflare-CDN-Cache-Control', 'public, max-age=60, stale-while-revalidate=300, stale-if-error=86400');
+        $this->assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
     }
 
     public function test_admin_login_is_not_marked_for_public_caching(): void

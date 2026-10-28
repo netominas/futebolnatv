@@ -150,7 +150,10 @@ if (isIos) showInstallButtons();
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=3', { scope: '/', updateViaCache: 'none' });
+        navigator.serviceWorker
+            .register('/sw.js?v=4', { scope: '/', updateViaCache: 'none' })
+            .then((registration) => registration.update())
+            .catch(() => undefined);
     });
 }
 

@@ -33,8 +33,13 @@ class ProgressiveWebAppTest extends TestCase
         $this->assertFileExists(public_path('images/pwa/icon-192.png'));
         $this->assertFileExists(public_path('images/pwa/icon-512.png'));
         $this->assertFileExists(public_path('images/pwa/icon-maskable-512.png'));
-        $this->assertStringContainsString('futebol-na-tv-v3', file_get_contents(public_path('sw.js')));
-        $this->assertStringContainsString("'/admin'", file_get_contents(public_path('sw.js')));
+        $serviceWorker = file_get_contents(public_path('sw.js'));
+
+        $this->assertStringContainsString('futebol-na-tv-v4', $serviceWorker);
+        $this->assertStringContainsString("'/admin'", $serviceWorker);
+        $this->assertStringContainsString("fetch(event.request, { cache: 'no-store' })", $serviceWorker);
+        $this->assertSame(1, substr_count($serviceWorker, 'cache.put(event.request, copy)'));
+        $this->assertStringContainsString("register('/sw.js?v=4'", file_get_contents(resource_path('js/app.js')));
     }
 
     public function test_pwa_script_emits_the_confirmed_installation_event_for_tag_manager(): void

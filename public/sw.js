@@ -1,4 +1,4 @@
-const CACHE_NAME = 'futebol-na-tv-v3';
+const CACHE_NAME = 'futebol-na-tv-v4';
 const OFFLINE_URL = '/offline.html';
 const STATIC_ASSETS = [
     OFFLINE_URL,
@@ -36,20 +36,8 @@ self.addEventListener('fetch', (event) => {
             return;
         }
 
-        const cachedResponse = caches.match(event.request);
-        const freshResponse = fetch(event.request).then((response) => {
-            if (response.ok && response.type === 'basic') {
-                const copy = response.clone();
-                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-            }
-
-            return response;
-        });
-
-        event.waitUntil(freshResponse.catch(() => undefined));
         event.respondWith(
-            cachedResponse
-                .then((cached) => cached || freshResponse)
+            fetch(event.request, { cache: 'no-store' })
                 .catch(() => caches.match(OFFLINE_URL))
         );
         return;
