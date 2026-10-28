@@ -19,7 +19,7 @@ class PublicCacheTest extends TestCase
             'Cloudflare-CDN-Cache-Control',
             'public, max-age=30, must-revalidate, stale-if-error=300',
         );
-        $this->assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
+        $this->assertStringContainsString('no-cache', (string) $response->headers->get('Cache-Control'));
         $this->assertFalse($response->headers->has('Set-Cookie'));
         $response->assertDontSee('name="csrf-token"', false);
     }
@@ -30,7 +30,7 @@ class PublicCacheTest extends TestCase
 
         $response->assertOk()
             ->assertHeader('Cloudflare-CDN-Cache-Control', 'public, max-age=60, stale-while-revalidate=300, stale-if-error=86400');
-        $this->assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
+        $this->assertStringContainsString('no-cache', (string) $response->headers->get('Cache-Control'));
     }
 
     public function test_admin_login_is_not_marked_for_public_caching(): void

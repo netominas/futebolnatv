@@ -16,9 +16,9 @@ class CachePublicResponse
             $isLivePage = $request->routeIs('fixtures.live');
             $isSchedulePage = $request->routeIs('home', 'fixtures.tomorrow', 'fixtures.by-date');
 
-            // The browser and the PWA must never reuse stale HTML. Cloudflare has
-            // its own short-lived policy below, independent from this header.
-            $response->headers->set('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
+            // Browsers must revalidate HTML on every navigation. Cloudflare may
+            // still use the separate, short-lived edge policy below.
+            $response->headers->set('Cache-Control', 'public, no-cache, max-age=0, must-revalidate');
             $response->headers->set(
                 'Cloudflare-CDN-Cache-Control',
                 match (true) {
