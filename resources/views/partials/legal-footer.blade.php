@@ -6,6 +6,16 @@
                 <span>Futebol na TV</span>
             </a>
             <p class="mt-3 max-w-md text-sm leading-6 text-slate-500">Guia independente de jogos televisionados e plataformas de streaming no Brasil. Horários e transmissões podem mudar sem aviso prévio.</p>
+            <nav class="mt-4 flex flex-wrap gap-2" aria-label="Redes sociais">
+                <a href="https://www.instagram.com/futebol.tv.br/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-extrabold text-slate-700 shadow-sm transition hover:border-blue-200 hover:text-blue-700" aria-label="Futebol na TV no Instagram">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                    Instagram
+                </a>
+                <a href="https://web.facebook.com/futeboltvbr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-extrabold text-slate-700 shadow-sm transition hover:border-blue-200 hover:text-blue-700" aria-label="Futebol na TV no Facebook">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor"><path d="M14 8h3V4.2c-.5-.1-2.2-.2-4.1-.2C9 4 6.3 6.4 6.3 10.8V14H2v4.3h4.3V24h5.2v-5.7h4.3l.7-4.3h-5v-2.8C11.5 9.9 11.9 8 14 8Z" transform="translate(3 -2) scale(.78)"/></svg>
+                    Facebook
+                </a>
+            </nav>
             <div class="mt-4 flex flex-wrap gap-2"><button type="button" data-pwa-install class="hidden rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm hover:bg-blue-700">Instalar Futebol na TV</button><button type="button" data-push-open class="hidden rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-extrabold text-blue-700 hover:bg-blue-100"><span aria-hidden="true">♢</span> <span data-push-label>Ativar alertas</span></button></div>
         </div>
         <nav class="grid grid-cols-2 gap-x-7 gap-y-2 text-sm font-bold text-slate-600"><a class="hover:text-blue-700" href="{{ route('news.index') }}">Notícias</a><a class="hover:text-blue-700" href="{{ route('pages.about') }}">Sobre</a><a class="hover:text-blue-700" href="{{ route('pages.contact') }}">Contato</a><a class="hover:text-blue-700" href="{{ route('pages.privacy') }}">Privacidade</a><a class="hover:text-blue-700" href="{{ route('pages.cookies') }}">Cookies</a><a class="hover:text-blue-700" href="{{ route('pages.terms') }}">Termos de Uso</a><a class="hover:text-blue-700" href="{{ route('pages.editorial') }}">Política Editorial</a></nav>

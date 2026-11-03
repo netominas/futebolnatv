@@ -15,6 +15,12 @@ class RequiredPagesTest extends TestCase
             $this->get(route($route))->assertOk()->assertSee('Futebol na TV');
         }
 
-        $this->get(route('home'))->assertSee(route('pages.privacy'))->assertSee(route('pages.contact'))->assertSee(route('pages.terms'));
+        $this->get(route('home'))
+            ->assertSee(route('pages.privacy'))
+            ->assertSee(route('pages.contact'))
+            ->assertSee(route('pages.terms'))
+            ->assertSee('https://www.instagram.com/futebol.tv.br/', false)
+            ->assertSee('https://web.facebook.com/futeboltvbr', false)
+            ->assertSee('aria-label="Redes sociais"', false);
     }
 }
