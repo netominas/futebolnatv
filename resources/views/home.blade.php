@@ -8,7 +8,7 @@
 <body class="min-h-screen bg-[#f4f7fb] text-slate-950 antialiased">@include('partials.google-tag-body')
 @include('partials.site-header')
 <main><section class="hero-panel border-b border-blue-100"><div class="mx-auto max-w-6xl px-4 pb-6 pt-5 sm:px-6 sm:pb-16 sm:pt-11"><div class="max-w-3xl">
-<h1 class="text-3xl font-black tracking-[-.04em] sm:text-4xl">{{ $pageHeading }}</h1>
+<h1 class="text-[1.4rem] font-black leading-tight tracking-[-.035em] sm:text-3xl">{{ $pageHeading }}</h1>
 <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:mt-4 sm:text-base sm:leading-7">{{ $heroDescription }}</p>
 </div></div></section>
 <div class="mx-auto max-w-6xl px-4 pb-14 pt-5 sm:px-6 sm:pt-0">

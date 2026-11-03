@@ -23,7 +23,7 @@ class ScheduleByDateTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('Jogo de Hoje')
-            ->assertSee('<h1 class="text-3xl font-black tracking-[-.04em] sm:text-4xl">Futebol na TV: jogos de hoje e onde assistir</h1>', false)
+            ->assertSee('<h1 class="text-[1.4rem] font-black leading-tight tracking-[-.035em] sm:text-3xl">Futebol na TV: jogos de hoje e onde assistir</h1>', false)
             ->assertSee('<meta name="description" content="Confira os jogos de hoje na TV e no streaming, horários de Brasília, campeonatos e canais para assistir futebol ao vivo no Brasil.">', false)
             ->assertSee('Confira os jogos de hoje na TV e no streaming, com horários de Brasília, campeonatos e canais de transmissão. Veja onde assistir cada partida ao vivo.')
             ->assertSee('Futebol na TV: saiba onde assistir aos jogos de hoje')
