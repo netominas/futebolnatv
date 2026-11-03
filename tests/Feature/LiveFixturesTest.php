@@ -39,6 +39,7 @@ class LiveFixturesTest extends TestCase
             ->assertDontSee('Partida Futura')
             ->assertDontSee('Partida Não Listada')
             ->assertDontSee('Partida Sem Canal')
+            ->assertSeeInOrder(['Partida em Andamento', 'Atualizado às'])
             ->assertSee('<link rel="canonical" href="'.route('fixtures.live').'">', false)
             ->assertHeader('X-Futebol-Cache', 'public')
             ->assertHeader('Cloudflare-CDN-Cache-Control', 'public, max-age=10, must-revalidate, stale-if-error=60')
@@ -55,6 +56,7 @@ class LiveFixturesTest extends TestCase
         $this->get(route('fixtures.live'))
             ->assertOk()
             ->assertSee('Nenhum jogo ao vivo agora')
+            ->assertSeeInOrder(['Nenhum jogo ao vivo agora', 'Atualizado às'])
             ->assertSee(route('home'));
     }
 

@@ -42,11 +42,6 @@
     </section>
 
     <div class="mx-auto max-w-6xl px-4 pb-14 pt-7 sm:px-6 sm:pt-9">
-        <div class="mb-7 flex flex-col gap-3 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <div><p class="text-xs font-extrabold uppercase tracking-widest text-blue-700">Atualizado às {{ $now->format('H:i') }}</p><p class="mt-1 text-sm leading-6 text-slate-600">Uma partida é considerada ao vivo desde o início programado até {{ $liveWindowMinutes / 60 }} horas depois.</p></div>
-            <a href="{{ route('home') }}" class="inline-flex shrink-0 items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-extrabold text-blue-700 shadow-sm ring-1 ring-blue-200 hover:bg-blue-100">Ver agenda completa</a>
-        </div>
-
         @if($fixturesByCompetition->isNotEmpty())
             <div class="mb-5 flex items-center justify-between gap-3"><div><p class="text-xs font-bold uppercase tracking-widest text-slate-400">Em andamento</p><h2 class="mt-1 text-xl font-black">{{ $fixtures->count() }} {{ $fixtures->count() === 1 ? 'partida ao vivo' : 'partidas ao vivo' }}</h2></div><span class="inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1.5 text-xs font-extrabold text-red-700"><span class="h-2 w-2 rounded-full bg-red-500"></span>AO VIVO</span></div>
             <div class="space-y-5">
@@ -79,6 +74,11 @@
                 <a href="{{ route('home') }}" class="mt-6 inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-md shadow-blue-600/20 hover:bg-blue-700">Ver jogos de hoje <span class="ml-2">→</span></a>
             </section>
         @endif
+
+        <div class="mt-7 flex flex-col gap-3 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div><p class="text-xs font-extrabold uppercase tracking-widest text-blue-700">Atualizado às {{ $now->format('H:i') }}</p><p class="mt-1 text-sm leading-6 text-slate-600">Uma partida é considerada ao vivo desde o início programado até {{ $liveWindowMinutes / 60 }} horas depois.</p></div>
+            <a href="{{ route('home') }}" class="inline-flex shrink-0 items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-extrabold text-blue-700 shadow-sm ring-1 ring-blue-200 hover:bg-blue-100">Ver agenda completa</a>
+        </div>
 
         <section class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8" aria-labelledby="como-calculamos-ao-vivo">
             <h2 id="como-calculamos-ao-vivo" class="text-2xl font-black tracking-tight">Como identificamos os jogos ao vivo?</h2>
