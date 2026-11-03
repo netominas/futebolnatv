@@ -9,7 +9,7 @@
 @include('partials.site-header')
 <main><section class="hero-panel border-b border-blue-100"><div class="mx-auto max-w-6xl px-4 pb-6 pt-5 sm:px-6 sm:pb-16 sm:pt-11"><div class="max-w-3xl">
 <h1 class="text-3xl font-black tracking-[-.04em] sm:text-4xl">{{ $pageHeading }}</h1>
-<p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:mt-4 sm:text-base sm:leading-7">Todos os jogos com transmissão confirmada para o Brasil, organizados por campeonato e canal.</p>
+<p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:mt-4 sm:text-base sm:leading-7">{{ $heroDescription }}</p>
 </div></div></section>
 <div class="mx-auto max-w-6xl px-4 pb-14 pt-5 sm:px-6 sm:pt-0">
 <nav class="date-nav -mt-7 mb-9 hidden gap-3 rounded-2xl border border-white bg-white p-3 shadow-xl shadow-slate-900/[.07] sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:p-4" aria-label="Navegação por data">

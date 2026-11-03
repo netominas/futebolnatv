@@ -73,13 +73,18 @@ class HomeController extends Controller
                 ->limit(4)
                 ->get(),
             'metaDescription' => match (true) {
-                $isToday => 'Futebol na TV hoje: veja os jogos ao vivo, horários e onde assistir cada partida na televisão e no streaming no Brasil.',
+                $isToday => 'Confira os jogos de hoje na TV e no streaming, horários de Brasília, campeonatos e canais para assistir futebol ao vivo no Brasil.',
                 $isTomorrow => 'Jogos de amanhã na TV: confira partidas, horários e onde assistir futebol ao vivo na televisão e no streaming no Brasil.',
                 default => "Jogos de futebol na TV em {$formattedDate}: veja horários e onde assistir ao vivo no Brasil.",
             },
+            'heroDescription' => match (true) {
+                $isToday => 'Confira os jogos de hoje na TV e no streaming, com horários de Brasília, campeonatos e canais de transmissão. Veja onde assistir cada partida ao vivo.',
+                $isTomorrow => 'Confira os jogos de amanhã na TV e no streaming, com horários de Brasília, campeonatos e canais de transmissão. Veja onde assistir cada partida ao vivo.',
+                default => "Confira os jogos de futebol na TV e no streaming em {$formattedDate}, com horários de Brasília, campeonatos e canais de transmissão.",
+            },
             'nextDateUrl' => $this->scheduleUrl($selectedDate->addDay()),
             'pageHeading' => match (true) {
-                $isToday => 'Jogos na TV hoje',
+                $isToday => 'Futebol na TV: jogos de hoje e onde assistir',
                 $isTomorrow => 'Jogos de amanhã na TV',
                 default => 'Jogos na TV em '.$selectedDate->translatedFormat('d \\d\\e F'),
             },
