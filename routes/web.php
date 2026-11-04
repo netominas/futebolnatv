@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\AiSettingController as AdminAiSettingController;
 use App\Http\Controllers\Admin\ChannelController as AdminChannelController;
 use App\Http\Controllers\Admin\CompetitionController as AdminCompetitionController;
 use App\Http\Controllers\Admin\NewsArticleController as AdminNewsArticleController;
@@ -81,6 +82,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/admin/login', [AdminAuthController::class, 'store'])->middleware('throttle:5,1')->name('admin.login.store');
 });
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
+    Route::get('/configuracoes-ia', [AdminAiSettingController::class, 'edit'])->name('ai-settings.edit');
+    Route::put('/configuracoes-ia', [AdminAiSettingController::class, 'update'])->middleware('throttle:10,1')->name('ai-settings.update');
     Route::get('/canais', [AdminChannelController::class, 'index'])->name('channels.index');
     Route::put('/canais/{channel}', [AdminChannelController::class, 'update'])->name('channels.update');
     Route::get('/campeonatos', [AdminCompetitionController::class, 'index'])->name('competitions.index');
