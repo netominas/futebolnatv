@@ -29,6 +29,7 @@ class AdminAiSettingTest extends TestCase
 
         $this->actingAs($user)->put(route('admin.ai-settings.update'), [
             'active_provider' => 'google',
+            'auto_generate_news_images' => '1',
             'openai_api_key' => $openAiKey,
             'openai_model' => 'gpt-image-2.5-flare',
             'google_api_key' => $googleKey,
@@ -37,6 +38,7 @@ class AdminAiSettingTest extends TestCase
 
         $settings = AiSetting::firstOrFail();
         $this->assertSame('google', $settings->active_provider);
+        $this->assertTrue($settings->auto_generate_news_images);
         $this->assertSame($openAiKey, $settings->openai_api_key);
         $this->assertSame($googleKey, $settings->google_api_key);
         $this->assertSame($googleKey, $settings->activeApiKey());

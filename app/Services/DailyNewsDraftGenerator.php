@@ -12,7 +12,10 @@ use Illuminate\Validation\ValidationException;
 
 class DailyNewsDraftGenerator
 {
-    public function __construct(private FeaturedFixtures $featuredFixtures) {}
+    public function __construct(
+        private FeaturedFixtures $featuredFixtures,
+        private NewsImageDispatcher $imageDispatcher,
+    ) {}
 
     public function generate(CarbonImmutable $date, User $author): NewsArticle
     {
@@ -123,6 +126,7 @@ class DailyNewsDraftGenerator
             : NewsArticle::create($attributes);
 
         $article->fixtures()->sync($fixtures->pluck('id'));
+        $this->imageDispatcher->dispatch($article);
 
         return $article->fresh(['author', 'fixtures']);
     }
@@ -154,8 +158,7 @@ class DailyNewsDraftGenerator
         ?Fixture $featuredFixture,
         ?string $busiestTime,
         int $busiestTimeCount,
-    ): array
-    {
+    ): array {
         $date = $coverageDate->format('d/m');
         $candidates = collect();
 

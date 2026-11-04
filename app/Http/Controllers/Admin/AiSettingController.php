@@ -32,6 +32,7 @@ class AiSettingController extends Controller
     {
         $validated = $request->validate([
             'active_provider' => ['required', Rule::in(['openai', 'google'])],
+            'auto_generate_news_images' => ['nullable', 'boolean'],
             'openai_api_key' => ['nullable', 'string', 'max:512'],
             'openai_model' => ['required', Rule::in(['gpt-image-2.5-flare', 'gpt-image-2.5-sunburst'])],
             'google_api_key' => ['nullable', 'string', 'max:512'],
@@ -64,6 +65,7 @@ class AiSettingController extends Controller
 
         $settings->update([
             'active_provider' => $validated['active_provider'],
+            'auto_generate_news_images' => $request->boolean('auto_generate_news_images'),
             'openai_api_key' => $openAiKey,
             'openai_model' => $validated['openai_model'],
             'google_api_key' => $googleKey,

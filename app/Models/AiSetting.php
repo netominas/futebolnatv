@@ -8,6 +8,7 @@ class AiSetting extends Model
 {
     protected $fillable = [
         'active_provider',
+        'auto_generate_news_images',
         'openai_api_key',
         'openai_model',
         'google_api_key',
@@ -23,6 +24,7 @@ class AiSetting extends Model
     protected function casts(): array
     {
         return [
+            'auto_generate_news_images' => 'boolean',
             'openai_api_key' => 'encrypted',
             'google_api_key' => 'encrypted',
         ];
@@ -32,6 +34,7 @@ class AiSetting extends Model
     {
         return self::query()->firstOrCreate(['id' => 1], [
             'active_provider' => 'openai',
+            'auto_generate_news_images' => true,
             'openai_model' => 'gpt-image-2.5-flare',
             'google_model' => 'gemini-3.1-flash-image',
         ]);

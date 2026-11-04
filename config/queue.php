@@ -82,6 +82,15 @@ return [
             'after_commit' => false,
         ],
 
+        'redis_ai' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_AI_CONNECTION', 'default'),
+            'queue' => 'ai',
+            'retry_after' => (int) env('REDIS_AI_RETRY_AFTER', 420),
+            'block_for' => 5,
+            'after_commit' => false,
+        ],
+
         'deferred' => [
             'driver' => 'deferred',
         ],

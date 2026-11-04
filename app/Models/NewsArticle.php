@@ -26,6 +26,11 @@ class NewsArticle extends Model
         'hero_image_alt',
         'hero_image_caption',
         'hero_image_credit',
+        'hero_image_generation_status',
+        'hero_image_generation_provider',
+        'hero_image_generation_model',
+        'hero_image_generation_error',
+        'hero_image_generated_at',
         'source_snapshot',
         'created_by',
         'reviewed_by',
@@ -42,6 +47,7 @@ class NewsArticle extends Model
             'scheduled_for' => 'immutable_datetime',
             'published_at' => 'immutable_datetime',
             'last_fact_checked_at' => 'immutable_datetime',
+            'hero_image_generated_at' => 'immutable_datetime',
         ];
     }
 

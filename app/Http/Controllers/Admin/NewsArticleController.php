@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\NewsArticle;
 use App\Models\User;
 use App\Services\DailyNewsDraftGenerator;
+use App\Services\NewsImageDispatcher;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -43,10 +44,10 @@ class NewsArticleController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, NewsImageDispatcher $imageDispatcher): RedirectResponse
     {
         $validated = $this->validateArticle($request);
-        $validated['slug'] = $this->uniqueSlug($validated['slug'] ?: $validated['title']);
+        $validated['slug'] = $this->uniqueSlug(($validated['slug'] ?? null) ?: $validated['title']);
         $validated['created_by'] = (int) $validated['created_by'];
         $validated['reviewed_by'] = $validated['status'] === 'draft' ? null : $request->user()->id;
         $validated = $this->publicationDates($validated);
@@ -55,8 +56,12 @@ class NewsArticleController extends Controller
         unset($validated['hero_image'], $validated['author_name'], $validated['author_bio']);
 
         $article = NewsArticle::create($validated);
+        $imageQueued = $imageDispatcher->dispatch($article);
 
-        return redirect()->route('admin.news.edit', $article)->with('status', 'Notícia criada com sucesso.');
+        return redirect()->route('admin.news.edit', $article)->with(
+            'status',
+            $imageQueued ? 'Notícia criada. A imagem está sendo gerada em segundo plano.' : 'Notícia criada com sucesso.',
+        );
     }
 
     public function edit(NewsArticle $article): View
@@ -70,7 +75,7 @@ class NewsArticleController extends Controller
     public function update(Request $request, NewsArticle $article): RedirectResponse
     {
         $validated = $this->validateArticle($request, $article);
-        $validated['slug'] = $this->uniqueSlug($validated['slug'] ?: $validated['title'], $article->id);
+        $validated['slug'] = $this->uniqueSlug(($validated['slug'] ?? null) ?: $validated['title'], $article->id);
         $validated['reviewed_by'] = $validated['status'] === 'draft' ? null : $request->user()->id;
         $validated = $this->publicationDates($validated, $article);
         $this->updateAuthor($validated);
@@ -81,6 +86,9 @@ class NewsArticleController extends Controller
                 Storage::disk('public')->delete($article->hero_image_path);
             }
             $validated['hero_image_path'] = $newPath;
+            $validated['hero_image_generation_status'] = null;
+            $validated['hero_image_generation_error'] = null;
+            $validated['hero_image_generated_at'] = null;
         }
 
         unset($validated['hero_image'], $validated['author_name'], $validated['author_bio']);

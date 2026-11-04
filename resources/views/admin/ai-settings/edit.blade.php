@@ -16,6 +16,7 @@
                 <label class="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 p-4 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input type="radio" name="active_provider" value="openai" class="mt-1" @checked(old('active_provider', $settings->active_provider) === 'openai')><span><strong class="block">OpenAI</strong><small class="mt-1 block text-slate-500">GPT Image para capas editoriais.</small></span></label>
                 <label class="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 p-4 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input type="radio" name="active_provider" value="google" class="mt-1" @checked(old('active_provider', $settings->active_provider) === 'google')><span><strong class="block">Google Gemini</strong><small class="mt-1 block text-slate-500">Nano Banana para geração de imagens.</small></span></label>
             </div>
+            <label class="mt-5 flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50/70 p-4"><input type="checkbox" name="auto_generate_news_images" value="1" class="mt-1" @checked(old('auto_generate_news_images', $settings->auto_generate_news_images))><span><strong class="block text-sm">Gerar a imagem automaticamente ao criar uma notícia</strong><small class="mt-1 block leading-5 text-slate-500">A notícia será salva como rascunho e a geração acontecerá na fila, sem atrasar o painel.</small></span></label>
         </section>
 
         <div class="grid gap-6 lg:grid-cols-2">
