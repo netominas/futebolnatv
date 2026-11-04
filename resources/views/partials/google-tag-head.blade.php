@@ -5,3 +5,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-KNQ76J3L');</script>
 <!-- End Google Tag Manager -->
+@unless(request()->is('admin/*'))
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6542760616729830" crossorigin="anonymous"></script>
+@endunless
